@@ -1,0 +1,89 @@
+# Reference repositories / external code
+references/
+reference/
+refs/
+
+# Local AI agent state
+.claude/
+.codex/
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+
+# VS Code local settings
+.vscode/
+*.code-workspace
+
+# JetBrains
+.idea/
+
+# Windows junk
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS junk
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+logs/
+game.log
+client.log
+faf.log
+
+# Supreme Commander / FAF local runtime junk
+*.scfareplay
+*.fafreplay
+*.replay
+*.dem
+*.tmp
+*.bak
+*.old
+
+# Archives / downloaded zips
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.gz
+
+# Lua compiled/cache files
+*.luac
+.luarc.json
+
+# Build / generated output
+dist/
+build/
+out/
+release/
+tmp/
+temp/
+
+# Local mod install copies / symlinks / junction targets
+local-mods/
+installed-mod/
+mods-install/
+
+# Node junk, if tools/scripts appear later
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python junk, if helper scripts appear later
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Misc
+*.swp
+*.swo
+*.orig
