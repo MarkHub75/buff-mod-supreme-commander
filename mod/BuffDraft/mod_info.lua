@@ -1,0 +1,9 @@
+name = "BuffDraft"
+version = 1
+description = "Private SIM mod draft: roguelike buffs every 5 minutes. MVP 1: timer logging only."
+author = "BuffDraft team"
+uid = "ccf210ed-6fde-4528-8607-12974c25d67d"
+selectable = true
+enabled = true
+exclusive = false
+ui_only = false
