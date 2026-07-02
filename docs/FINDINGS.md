@@ -8,3 +8,9 @@
 - `BeginSession()` в `/lua/simInit.lua` вызывается движком после создания армий, прямо перед стартом игры — стандартное место для запуска фоновой логики мода.
 - Паттерн фонового SIM-потока: `ForkThread(fn)` + `WaitSeconds(n)` в цикле (так делает сама игра: `GameOverListenerThread` в simInit.lua, интервалы в `lua/sim/score.lua`). `WaitSeconds` ждёт **игровые** секунды (1 игровая секунда = 10 тиков), т.е. интервал следует за игровым временем, а не реальным.
 - `LOG(...)` из SIM-кода пишет в `game.log`.
+
+## Армии, команды и альянсы (source: references/fa-develop/lua/simInit.lua, lua/aibrain.lua)
+- `ArmyBrains` — глобальный массив брейнов, заполняется в `OnCreateArmyBrain(index, brain, name, nickname)`. У брейна есть поля: `Name` (имя армии, напр. ARMY_1), `Nickname` (имя игрока/AI), `BrainType` (`'Human'` | `'AI'`), `Human`, `Civilian`, `AI`, `Army` (кэш `GetArmyIndex()`).
+- `ScenarioInfo.ArmySetup[name]` — настройки армии из лобби: `.Team` (число; `> 1` = армия в команде, `1` = без команды), `.ArmyIndex`, `.Human`, `.Civilian`, `.AIPersonality`.
+- Альянсы из лобби применяются в `BeginSessionTeams()` (вызывается внутри `BeginSession()`): для всех армий с одинаковым `Team > 1` вызывается `SetAlliance(i, j, "Ally")`. До этого момента все армии считаются врагами. Проверка: SIM-глобал `IsAlly(i, j)`; `IsAlly(i, i)` = true (на этом полагается `BeginSessionUnionArmy`).
+- Фракция брейна: движковый метод `brain:GetFactionIndex()`.
