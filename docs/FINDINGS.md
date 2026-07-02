@@ -14,3 +14,9 @@
 - `ScenarioInfo.ArmySetup[name]` — настройки армии из лобби: `.Team` (число; `> 1` = армия в команде, `1` = без команды), `.ArmyIndex`, `.Human`, `.Civilian`, `.AIPersonality`.
 - Альянсы из лобби применяются в `BeginSessionTeams()` (вызывается внутри `BeginSession()`): для всех армий с одинаковым `Team > 1` вызывается `SetAlliance(i, j, "Ally")`. До этого момента все армии считаются врагами. Проверка: SIM-глобал `IsAlly(i, j)`; `IsAlly(i, i)` = true (на этом полагается `BeginSessionUnionArmy`).
 - Фракция брейна: движковый метод `brain:GetFactionIndex()`.
+
+## Random, import и SIM-state модов (source: references/fa-develop)
+- `Random(min, max)` в SIM-коде — синхронизированный движковый RNG, часть детерминированного состояния симуляции: все клиенты получают одинаковые значения (используется в `lua/sim/BuilderManager.lua`, `FactoryBuilderManager.lua` и др.). Вызывать его из UI-кода нельзя — это desync. `os.time`/реальное время в SIM не использовать.
+- Файлы мода доступны для `import` по пути `/mods/<имя папки мода>/...` (пример в самой FAF: `import("/mods/supremescoreboard/modules/score_board.lua")` в `lua/ui/game/multifunction.lua`). Путь зависит от имени папки мода в каталоге mods.
+- **`table.concat` в SupCom (LuaPlus) принимает только строки** — числа и таблицы вызывают ошибку `bad argument #1 to 'concat' (table contains non-strings)` (в отличие от стандартного Lua, где числа допустимы). Перед concat всё прогонять через `tostring`. Найдено на краше MVP 3 в реальной катке.
+- `import` кэширует модули (таблица `__modules`): повторный import возвращает ту же таблицу, поэтому локальное состояние на уровне модуля живёт всю SIM-сессию — рабочий паттерн для SIM-state мода.

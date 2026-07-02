@@ -1,13 +1,20 @@
--- BuffDraft MVP 1: log a marker to game.log every 5 game minutes.
--- BuffDraft MVP 2: log armies and detect the two sides (solo human vs human with AI allies).
+-- BuffDraft MVP 1: log a timer marker to game.log on every draft interval.
+-- BuffDraft MVP 2: log armies and detect the two sides (slot-based, heuristic fallback).
+-- BuffDraft MVP 3: run the sim-side draft pipeline (lua/draft.lua) on every timer tick.
 -- This file is concatenated to the end of /lua/simInit.lua by the mod hook system.
+
+local BUFF_DRAFT_INTERVAL_SECONDS = 30 -- local test value; production value is 300 seconds
+
+-- Set once at BeginSession by slot detection; nil means side detection incomplete.
+local BuffDraftSides = nil
 
 local function BuffDraftTimerThread()
     local tick = 0
     while true do
-        WaitSeconds(300)
+        WaitSeconds(BUFF_DRAFT_INTERVAL_SECONDS)
         tick = tick + 1
-        LOG(string.format("FAF_BUFF_DRAFT: timer tick %d at %d minutes", tick, tick * 5))
+        LOG(string.format("FAF_BUFF_DRAFT: timer tick %d at %d seconds", tick, tick * BUFF_DRAFT_INTERVAL_SECONDS))
+        import('/mods/BuffDraft/lua/draft.lua').RunDraftTick(tick, BuffDraftSides)
     end
 end
 
@@ -15,28 +22,33 @@ local BuffDraftMarkSlot = "ARMY_8"
 
 -- Primary detection: slot-based. Mark is the army in the fixed slot BuffDraftMarkSlot,
 -- every other non-civilian army belongs to Artem's side (Artem + his AI allies).
--- Returns true on success, false if the slot was not found.
-local function BuffDraftLogSidesSlotMode()
-    local markArmy, artemSide = nil, {}
+-- Returns { mark = {armyIndex...}, artem = {armyIndex...} }, or nil if the slot
+-- was not found.
+local function BuffDraftDetectSidesSlotMode()
+    local markArmy = nil
+    local sides = { mark = {}, artem = {} }
+    local artemInfo = {}
     for index, brain in ArmyBrains do
         if not brain.Civilian then
             if brain.Name == BuffDraftMarkSlot then
                 markArmy = brain
+                table.insert(sides.mark, index)
             else
-                table.insert(artemSide, string.format("%d (%s, %s)", index, tostring(brain.Name), tostring(brain.Nickname)))
+                table.insert(sides.artem, index)
+                table.insert(artemInfo, string.format("%d (%s, %s)", index, tostring(brain.Name), tostring(brain.Nickname)))
             end
         end
     end
 
     if not markArmy then
-        return false
+        return nil
     end
 
     LOG("FAF_BUFF_DRAFT: slot mode enabled")
     LOG(string.format("FAF_BUFF_DRAFT: Mark slot army: %d (%s, %s, %s)",
         markArmy.Army, tostring(markArmy.Name), tostring(markArmy.Nickname), tostring(markArmy.BrainType)))
-    LOG("FAF_BUFF_DRAFT: Artem side armies: " .. table.concat(artemSide, "; "))
-    return true
+    LOG("FAF_BUFF_DRAFT: Artem side armies: " .. table.concat(artemInfo, "; "))
+    return sides
 end
 
 -- Fallback/debug heuristic: Mark plays alone, Artem plays with AI allies. The side of
@@ -66,7 +78,8 @@ local function BuffDraftLogSides()
         local side = {}
         for index, brain in ArmyBrains do
             if (not brain.Civilian) and IsAlly(humanIndex, index) then
-                table.insert(side, index)
+                -- store as string: table.concat in SupCom's Lua only accepts strings
+                table.insert(side, tostring(index))
             end
         end
         if table.getn(side) == 1 then
@@ -92,7 +105,8 @@ do
         oldBeginSession()
 
         LOG("FAF_BUFF_DRAFT: mod active, starting timer thread")
-        if not BuffDraftLogSidesSlotMode() then
+        BuffDraftSides = BuffDraftDetectSidesSlotMode()
+        if not BuffDraftSides then
             LOG("FAF_BUFF_DRAFT: slot mode failed (" .. BuffDraftMarkSlot .. " not found), falling back to heuristic")
             BuffDraftLogSides()
         end
