@@ -11,9 +11,37 @@ local function BuffDraftTimerThread()
     end
 end
 
--- Expected game mode: Mark plays alone, Artem plays with AI allies. The side of each
--- human is that human plus every army allied to it. Runs once, after BeginSessionTeams
--- has applied the lobby team setup, so IsAlly reflects the real alliances.
+local BuffDraftMarkSlot = "ARMY_8"
+
+-- Primary detection: slot-based. Mark is the army in the fixed slot BuffDraftMarkSlot,
+-- every other non-civilian army belongs to Artem's side (Artem + his AI allies).
+-- Returns true on success, false if the slot was not found.
+local function BuffDraftLogSidesSlotMode()
+    local markArmy, artemSide = nil, {}
+    for index, brain in ArmyBrains do
+        if not brain.Civilian then
+            if brain.Name == BuffDraftMarkSlot then
+                markArmy = brain
+            else
+                table.insert(artemSide, string.format("%d (%s, %s)", index, tostring(brain.Name), tostring(brain.Nickname)))
+            end
+        end
+    end
+
+    if not markArmy then
+        return false
+    end
+
+    LOG("FAF_BUFF_DRAFT: slot mode enabled")
+    LOG(string.format("FAF_BUFF_DRAFT: Mark slot army: %d (%s, %s, %s)",
+        markArmy.Army, tostring(markArmy.Name), tostring(markArmy.Nickname), tostring(markArmy.BrainType)))
+    LOG("FAF_BUFF_DRAFT: Artem side armies: " .. table.concat(artemSide, "; "))
+    return true
+end
+
+-- Fallback/debug heuristic: Mark plays alone, Artem plays with AI allies. The side of
+-- each human is that human plus every army allied to it. Runs once, after
+-- BeginSessionTeams has applied the lobby team setup, so IsAlly reflects real alliances.
 local function BuffDraftLogSides()
     local humans = {}
     for index, brain in ArmyBrains do
@@ -64,7 +92,10 @@ do
         oldBeginSession()
 
         LOG("FAF_BUFF_DRAFT: mod active, starting timer thread")
-        BuffDraftLogSides()
+        if not BuffDraftLogSidesSlotMode() then
+            LOG("FAF_BUFF_DRAFT: slot mode failed (" .. BuffDraftMarkSlot .. " not found), falling back to heuristic")
+            BuffDraftLogSides()
+        end
         ForkThread(BuffDraftTimerThread)
     end
 end
