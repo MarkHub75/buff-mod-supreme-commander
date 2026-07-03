@@ -18,6 +18,7 @@ local BLOCK_WIDTH = 560
 local PendingState = nil
 
 local ActivePopup = nil
+local ActiveTick = nil
 
 local function ClosePopup()
     -- UI controls have no :IsDestroyed() method; FAF uses the global IsDestroyed()
@@ -25,6 +26,7 @@ local function ClosePopup()
         ActivePopup:Close()
     end
     ActivePopup = nil
+    ActiveTick = nil
 end
 
 local function SendPick(side, buffId, tick)
@@ -81,6 +83,10 @@ local function CreateOptionBlock(dialog, option, onPick)
 end
 
 local function ShowChoiceWindow(side, choice)
+    -- this choice window is already open: don't create a duplicate
+    if ActivePopup and (not IsDestroyed(ActivePopup)) and ActiveTick == choice.tick then
+        return
+    end
     ClosePopup()
 
     local parent = GetFrame(0)
@@ -119,6 +125,7 @@ local function ShowChoiceWindow(side, choice)
     popup.OnEscapePressed = function() ClosePopup() end
 
     ActivePopup = popup
+    ActiveTick = choice.tick
     LOG("FAF_BUFF_DRAFT: UI choice window shown for side " .. tostring(side)
         .. " tick " .. tostring(choice.tick))
 end

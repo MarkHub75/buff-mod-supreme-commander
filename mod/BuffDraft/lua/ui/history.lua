@@ -64,7 +64,7 @@ local function CreatePanel()
     pendingLabel:DisableHitTest()
     LayoutHelpers.AtLeftTopIn(pendingLabel, client, 8, 6)
 
-    chooseButton = UIUtil.CreateButtonWithDropshadow(client, '/BUTTON/medium/', 'Choose')
+    chooseButton = UIUtil.CreateButtonWithDropshadow(client, '/BUTTON/medium/', 'Open pending choice')
     LayoutHelpers.Below(chooseButton, pendingLabel, 4)
     LayoutHelpers.AtLeftIn(chooseButton, client, 8)
     chooseButton.OnClick = function(self, modifiers)
