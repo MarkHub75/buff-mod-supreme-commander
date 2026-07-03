@@ -2,7 +2,7 @@
 -- `target` is a hint for future MVPs about what the buff will eventually affect.
 
 BuffCatalog = {
-    { id = "engineer_build_speed_1", title = "Engineer Build Speed I", description = "Engineers build faster.", target = "engineers" },
+    { id = "engineer_build_speed_1", title = "Engineer Rush", description = "Engineers of this side build 500% faster.", target = "engineers" },
     { id = "land_rate_of_fire_1", title = "Land Rate of Fire I", description = "Land units fire faster.", target = "land" },
     { id = "shield_health_1", title = "Shield Health I", description = "Shields have more health.", target = "shields" },
     { id = "tactical_range_1", title = "Tactical Range I", description = "Tactical missile launchers have more range.", target = "tactical" },
