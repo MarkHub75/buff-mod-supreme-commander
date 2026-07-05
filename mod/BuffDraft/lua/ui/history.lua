@@ -7,8 +7,12 @@
 local UIUtil = import('/lua/ui/uiutil.lua')
 local LayoutHelpers = import('/lua/maui/layouthelpers.lua')
 local Window = import('/lua/maui/window.lua').Window
+local Tooltip = import('/lua/ui/game/tooltip.lua')
+-- data-only catalog, shared with the sim: used here only for tooltip text
+local BuffCatalog = import('/mods/BuffDraft/lua/buffs.lua').BuffCatalog
 
 local PANEL_WIDTH = 280 -- unscaled pixels
+local TOOLTIP_WIDTH = 300
 
 local panel = nil
 local pendingLabel = nil
@@ -83,6 +87,37 @@ local function EnsurePanel()
     panel:Show()
 end
 
+local function CatalogEntry(id)
+    for _, buff in BuffCatalog do
+        if buff.id == id then
+            return buff
+        end
+    end
+    return nil
+end
+
+-- Full-detail tooltip for an already picked buff. Display only: the catalog text is
+-- static data; no gameplay logic runs here.
+local function AddBuffTooltip(control, pick)
+    local entry = CatalogEntry(pick.id)
+    local title = (entry and entry.title) or tostring(pick.title)
+    local body = ((entry and entry.description) or "")
+    if entry and entry.effect then
+        body = body .. " Effect: " .. entry.effect
+    end
+    control.HandleEvent = function(self, event)
+        if event.Type == 'MouseEnter' then
+            -- forced=true: show even if the game-options tooltip toggle is off
+            Tooltip.CreateMouseoverDisplay(self, { text = title, body = body },
+                0, true, TOOLTIP_WIDTH, true)
+            LOG("FAF_BUFF_DRAFT_UI: tooltip shown for " .. tostring(pick.id))
+        elseif event.Type == 'MouseExit' then
+            Tooltip.DestroyMouseoverDisplay()
+        end
+        return true -- consume so hovering a row does not start a window drag
+    end
+end
+
 local function RebuildRows(sideName, picks)
     local client = panel:GetClientGroup()
     for _, control in rows do
@@ -96,7 +131,8 @@ local function RebuildRows(sideName, picks)
     for _, pick in picks do
         local titleText = UIUtil.CreateText(client,
             tostring(index) .. ". " .. tostring(pick.title), 14, UIUtil.bodyFont)
-        titleText:DisableHitTest()
+        -- hit test stays enabled: the row shows the full-detail tooltip on hover
+        AddBuffTooltip(titleText, pick)
         if prev then
             LayoutHelpers.Below(titleText, prev, 6)
         else

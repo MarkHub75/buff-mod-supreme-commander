@@ -51,4 +51,70 @@
 - Regen-аффект: Mult считается от MaxHealth и обязан быть < 1 (иначе WARN и отмена) — для плоского бонуса использовать только Add.
 - MaxHealth-аффект по умолчанию поднимает и текущее HP на ту же дельту (флаг DoNotFill отключает).
 - Эффекты, для которых per-unit API НЕТ: reclaim bonus (yield лежит на пропах/команде реклейма).
+## Расширение эффектов (source: references/fa-develop/fa-develop/lua/sim/buff.lua, Weapon.lua, Unit.lua, ui/game/tooltip.lua)
+- **`ApplyBuff` сам проверяет `EntityCategory` блюпринта баффа** (`ParseEntityCategory` + `EntityCategoryContains`, buff.lua:711-716) и молча выходит, если юнит не подходит. Для составных категорий проще ставить `EntityCategory = 'ALLUNITS'` и точно таргетить своим category-объектом.
+- **`Duration` баффа — в игровых секундах**: `BuffWorkThread` делает `WaitSeconds(buffDef.Duration)` и снимает бафф (`RemoveBuff` пересчитывает аффекты от оставшихся баффов). Рабочий паттерн временного баффа: `Duration = 60, Stacks = 'IGNORE'`.
+- **`BuffCalculate` агрегирует ВСЕ баффы юнита по типу аффекта** (adds суммируются, mults перемножаются) — разные BuffType с MoveMult/MaxHealth корректно стекаются; снятие одного пересчитывает остальное.
+- **`RemoveBuff` небезопасен как `HasBuff`**: индексирует `unit.Buffs.BuffTable[def.BuffType][buffName]` без nil-проверки — вызывать только после своей проверки наличия.
+- **`wep:AddDamageMod(add)` / `wep:AddDamageRadiusMod(add)`** — плоские per-instance добавки к damage table оружия (Weapon.lua:688-698), значения подхватываются при следующем выстреле. А вот `DoTTime`/`DoTPulses` и `MuzzleSalvoSize` читаются напрямую из блюпринта — DoT и размер залпа per-instance не изменить.
+- **`CreateUnitHPR(bpId, armyIndex, x, y, z, pitch, yaw, roll)`** — стандартный спавн юнита в SIM (сценарии, поды, external factories); `GetTerrainHeight(x, z)` — SIM-глобал для высоты. Faction index брейна (1 UEF, 2 Aeon, 3 Cybran, 4 Sera) → выбор блюпринта по фракции.
+- **`brain:GiveResource('MASS'|'ENERGY', amount)`** — движковый метод, молча капится хранилищем (см. SimUtils.GiveResourcesToPlayer). `IsEnemy(a1, a2)` — SIM-глобал.
+- **Условный build rate** («строит X быстрее»): хук `Unit.OnStartBuild(self, built, order)` → `ApplyBuff`, `OnStopBuild`/`OnFailedToBuild` → `RemoveBuff`. `Stacks='IGNORE'` делает повторный apply на очереди целей no-op.
+- **Тултипы UI**: `import('/lua/ui/game/tooltip.lua').CreateMouseoverDisplay(parent, {text=title, body=desc}, delay, true--[[extended]], width, forced)` на MouseEnter + `DestroyMouseoverDisplay()` на MouseExit (паттерн `AddControlTooltipManual`). Тултип — ребёнок parent-контрола, умирает вместе с ним. `forced=true` игнорирует игровую опцию tooltips.
+
 - **У UI-контролов НЕТ метода `:IsDestroyed()`** — вызов падает с `attempt to call method 'IsDestroyed' (a nil value)`. Проверка живости контрола — глобальная функция: `if control and not IsDestroyed(control) then` (так в ConnectionDialog.lua, lobby/chatarea.lua). Найдено на краше кнопки Choose в MVP 6.
+
+## Buff implementation matrix (audit, catalog = 35 buffs)
+
+Источник: mod/BuffDraft/lua/buffs.lua (каталог/пул драфта), effects.lua (BuffSpecs + NotImplementedReasons).
+Сверка автоматическая: 35 id каталога = 30 BuffSpecs + 5 NotImplementedReasons, орфанов нет в обе стороны;
+все 25 BuffBlueprint зарегистрированы и используются. Пул драфта = весь каталог, т.е. not implemented
+баффы драфтятся и при пике только логируются (no-op) — это осознанно.
+
+Общее для всех parts-баффов: current units = да (свип на пике; 'built'-parts пропускают недостроенных,
+их добирает OnStopBeingBuilt), future units = да (хуки OnCreate/OnStopBeingBuilt), guard от двойного
+применения = да (HasBuffApplied per unit per part; кастомные — маркер unit.BuffDraftApplied). Отличия
+отмечены в таблице.
+
+| buffId | status | categories | current | future | guard | примечание |
+|---|---|---|---|---|---|---|
+| engineer_build_speed_1 | implemented | ENGINEER − COMMAND | да | да | да | x5 build rate |
+| factory_build_speed_1 | implemented | FACTORY | да | да | да | x3 |
+| air_speed_1 | implemented | AIR × MOBILE | да | да | да | x2 MoveMult |
+| naval_armor_1 | implemented | NAVAL × MOBILE | да | да | да | x2.5 HP |
+| experimentals_health_1 | implemented | EXPERIMENTAL | да | да | да | x2 HP |
+| acu_regen_1 | implemented | COMMAND | да | да | да | +60 регена |
+| eco_overclock_1 | implemented | STRUCTURE × (MASSPROD + ENERGYPROD) | да | да | да | x2.5 |
+| radar_vision_1 | implemented | RADAR; SCOUT | да | да | да | x2 радар / x2 зрение |
+| anti_air_damage_1 | implemented | ANTIAIR (оружия UWRC_AntiAir) | да | да | да | x2.5 урон |
+| land_rate_of_fire_1 | implemented | LAND × MOBILE (UWRC_DirectFire) | да | да | да | x2 РоФ |
+| artillery_range_1 | implemented | ARTILLERY (UWRC_IndirectFire) | да | да | да | x1.5 |
+| tactical_range_1 | implemented | TACTICALMISSILEPLATFORM | да | да | да | x2; стекается с tactical_supremacy через CombinedWeaponMult |
+| shield_health_1 | implemented | STRUCTURE × SHIELD | да | да | да | x2 щит |
+| mobile_shields_1 | implemented | MOBILE × SHIELD | да | да | да | x2 щит |
+| drone_foundry_1 | implemented | спавн у STRUCTURE × FACTORY × LAND | да* | да* | поток 1/армию | *волна каждые 45с берёт текущие фабрики; T1 танк по фракции |
+| engineer_swarm_1 | implemented | спавн у STRUCTURE × FACTORY × LAND | да* | да* | поток 1/армию | *аналогично, T1 инженер каждые 60с |
+| emergency_fabrication_1 | implemented | билдеры ENGINEER, цели STRUCTURE × DEFENSE | да** | да | Stacks=IGNORE + checked remove | **со следующего начала стройки; x3 build rate на время стройки |
+| overcharged_shields_1 | partial | SHIELD (все с unit.MyShield) | да | да | да | x2.5 щит; перезарядка не сделана — shield spec фиксирован при создании |
+| napalm_rounds_1 | partial | LAND × MOBILE (direct) + ARTILLERY (indirect) | да | да | да | +1 радиус урона; DoT не сделан — DoTTime/Pulses только в блюпринте |
+| teleport_doctrine_1 | partial | ENGINEER + COMMAND + SUBCOMMANDER | да | да | да | x2 скорость; сам телепорт не сделан — нужен enhancement + UI |
+| missile_storm_1 | not implemented | — | — | — | — | MuzzleSalvoSize — данные блюпринта оружия, per-instance API нет |
+| orbital_lance_1 | not implemented | — | — | — | — | нужен target-point UI + кастомный страйк; TODO |
+| nano_swarm_1 | partial | ALLUNITS | да | да | да | +5 реген постоянно; out-of-combat детект небезопасен |
+| experimental_discount_1 | partial | билдеры ENGINEER + FACTORY, цели EXPERIMENTAL | да** | да | Stacks=IGNORE + checked remove | x2.5 build rate при стройке экспериментала; удешевление не сделано (economy — глобальный блюпринт) |
+| rapid_deployment_1 | implemented | MOBILE | НЕТ (futureOnly) | да | да | x2 скорость на 60с только новым юнитам — так задумано |
+| fortress_protocol_1 | implemented | STRUCTURE (HP); MOBILE (замедление) | да | да | да | x3 HP / x0.85 скорость |
+| hunter_protocol_1 | implemented | MOBILE (зрение, скорость); MOBILE × RADAR (радар) | да | да | да | радар только у юнитов с радаром (иначе RadarRadius его раздаёт) |
+| black_market_economy_1 | implemented | килы любых юнитов армии | да | да | флаг 1/армию | 10% mass/energy стоимости жертвы через OnKilledUnit + GiveResource |
+| chain_lightning_weapons_1 | not implemented | — | — | — | — | нужны кастомные projectile/weapon скрипты; TODO |
+| tactical_supremacy_1 | implemented | TACTICALMISSILEPLATFORM | да | да | да | x3 дальность + x2 build rate ракет |
+| air_superiority_1 | implemented | AIR × MOBILE | да | да | да | x2 скорость, x1.5 урон, x0.75 HP |
+| naval_dreadnoughts_1 | implemented | NAVAL × MOBILE | да | да | да | x3 HP, x1.5 дальность |
+| radar_omniscience_1 | implemented | (COMMAND + STRUCTURE × RADAR × TECH3) × OMNI; STRUCTURE × RADAR × TECH3 | да | да | да | x3 омни, x2.5 радар |
+| salvage_explosion_1 | not implemented | — | — | — | — | wreckage считается из блюпринта жертвы при смерти; со стороны баффающего API нет |
+| reclaim_bonus_1 | not implemented | — | — | — | — | reclaim yield живёт на пропах/команде реклейма, per-unit API нет |
+
+Итог: 25 implemented, 5 partial, 5 not implemented.
+Баффы в каталоге без эффекта: missile_storm_1, orbital_lance_1, chain_lightning_weapons_1,
+salvage_explosion_1, reclaim_bonus_1 (все логируют причину при пике).
+Эффекты в коде вне каталога: нет.
