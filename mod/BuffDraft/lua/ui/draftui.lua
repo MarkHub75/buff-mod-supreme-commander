@@ -53,7 +53,22 @@ local function CreateOptionBlock(dialog, option, onPick)
 
     local textWidth = block.Width() - button.Width() - LayoutHelpers.ScaleNumber(44)
 
-    local title = UIUtil.CreateText(block, tostring(option.title), 18, UIUtil.titleFont)
+    -- rarity comes from the sim with each option (catalog data); display only.
+    -- Colored title + text tag, so the tier reads even without color perception.
+    local rarity = option.rarity or "common"
+    local titleText = tostring(option.title)
+    local titleColor = nil
+    if rarity == "rare" then
+        titleText = titleText .. "  [Rare]"
+        titleColor = 'FF80FF80' -- green
+    elseif rarity == "legendary" then
+        titleText = titleText .. "  [Legendary]"
+        titleColor = 'FFC080FF' -- purple
+    end
+    local title = UIUtil.CreateText(block, titleText, 18, UIUtil.titleFont)
+    if titleColor then
+        title:SetColor(titleColor)
+    end
     LayoutHelpers.AtLeftTopIn(title, block, 12, 8)
 
     local descTexts = {}
@@ -139,16 +154,44 @@ function OpenPendingChoice()
     ShowChoiceWindow(PendingState.side, PendingState.first)
 end
 
+--- The side name of the local player, learned from its pending events; nil until
+--- the first draft tick. Used by the admin panel as its default side.
+function LocalSideName()
+    return PendingState and PendingState.side or nil
+end
+
+-- One broken handler must not stall the rest of the beat's events (a crash here
+-- once swallowed the "pending count=0" event right after a pick, leaving the
+-- Choose button stuck enabled), so every dispatch runs behind pcall.
+local function Dispatch(name, fn)
+    local ok, err = pcall(fn)
+    if not ok then
+        WARN("FAF_BUFF_DRAFT_UI: " .. name .. " event handler error: " .. tostring(err))
+    end
+end
+
 --- Called from the UserSync hook with the list of draft events of this sim beat.
 function ProcessEvents(events)
     for _, event in events do
         if event.event == "pending" then
             if GetFocusArmy() == event.chooserArmy then
                 PendingState = event
-                import('/mods/BuffDraft/lua/ui/history.lua').UpdatePending(event)
+                Dispatch("pending", function()
+                    import('/mods/BuffDraft/lua/ui/history.lua').UpdatePending(event)
+                end)
             end
         elseif event.event == "history" then
-            import('/mods/BuffDraft/lua/ui/history.lua').Update(event)
+            Dispatch("history", function()
+                import('/mods/BuffDraft/lua/ui/history.lua').Update(event)
+            end)
+            -- the admin panel tracks picked lists of both sides (no-op when closed)
+            Dispatch("admin-history", function()
+                import('/mods/BuffDraft/lua/ui/admin.lua').OnHistoryEvent(event)
+            end)
+        elseif event.event == "active" then
+            Dispatch("active", function()
+                import('/mods/BuffDraft/lua/ui/history.lua').UpdateActive(event)
+            end)
         end
     end
 end

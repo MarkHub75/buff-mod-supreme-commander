@@ -3,17 +3,22 @@
 -- BuffDraft MVP 3: run the sim-side draft pipeline (lua/draft.lua) on every timer tick.
 -- This file is concatenated to the end of /lua/simInit.lua by the mod hook system.
 
-local BUFF_DRAFT_INTERVAL_SECONDS = 30 -- local test value; production value is 300 seconds
+-- Draft cadence comes from /mods/BuffDraft/lua/config.lua (DraftIntervalSeconds:
+-- 300 for the 5-minute cadence); nil-safe fallback.
+local function BuffDraftIntervalSeconds()
+    return import('/mods/BuffDraft/lua/config.lua').DraftIntervalSeconds or 300
+end
 
 -- Set once at BeginSession by slot detection; nil means side detection incomplete.
 local BuffDraftSides = nil
 
 local function BuffDraftTimerThread()
+    local interval = BuffDraftIntervalSeconds()
     local tick = 0
     while true do
-        WaitSeconds(BUFF_DRAFT_INTERVAL_SECONDS)
+        WaitSeconds(interval)
         tick = tick + 1
-        LOG(string.format("FAF_BUFF_DRAFT: timer tick %d at %d seconds", tick, tick * BUFF_DRAFT_INTERVAL_SECONDS))
+        LOG(string.format("FAF_BUFF_DRAFT: timer tick %d at %d seconds", tick, tick * interval))
         import('/mods/BuffDraft/lua/draft.lua').RunDraftTick(tick, BuffDraftSides)
     end
 end
@@ -105,11 +110,23 @@ do
         oldBeginSession()
 
         LOG("FAF_BUFF_DRAFT: mod active, starting timer thread")
+        LOG("FAF_BUFF_DRAFT: config draftInterval=" .. tostring(BuffDraftIntervalSeconds())
+            .. " options=" .. tostring(import('/mods/BuffDraft/lua/config.lua').OptionsPerTick or 3))
         BuffDraftSides = BuffDraftDetectSidesSlotMode()
         if not BuffDraftSides then
             LOG("FAF_BUFF_DRAFT: slot mode failed (" .. BuffDraftMarkSlot .. " not found), falling back to heuristic")
             BuffDraftLogSides()
         end
+        -- the admin panel needs the side->armies mapping between draft ticks too
+        import('/mods/BuffDraft/lua/draft.lua').SetSides(BuffDraftSides)
         ForkThread(BuffDraftTimerThread)
+        -- part 2: AI pressure director, isolated in lua/ai_director/ (delete that
+        -- folder + set EnableAIDirector = false in config.lua to remove part 2).
+        -- The flag gates the import itself, so config-off never touches the folder.
+        if import('/mods/BuffDraft/lua/config.lua').EnableAIDirector then
+            import('/mods/BuffDraft/lua/ai_director/director.lua').Start(BuffDraftSides)
+        else
+            LOG("FAF_AI_DIRECTOR: disabled by config")
+        end
     end
 end

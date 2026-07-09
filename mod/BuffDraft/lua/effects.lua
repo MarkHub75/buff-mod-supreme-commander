@@ -19,53 +19,84 @@
 local Buff = import('/lua/sim/Buff.lua')
 
 --#region tuning constants
--- Tuned for the 10-minute draft cadence: one pick should feel significant.
--- Keep the `effect` strings in buffs.lua in sync with these values.
+-- All balance values live in /mods/BuffDraft/lua/config.lua; each read falls
+-- back to the same default, so a missing config field cannot crash the sim.
+-- The catalog tooltips (buffs.lua) are built from the same config values.
 
-local ENGINEER_BUILD_RATE_MULT = 5.0
-local FACTORY_BUILD_RATE_MULT = 3.0
-local AIR_SPEED_MULT = 2.0
-local NAVAL_ARMOR_MULT = 2.5
-local EXPERIMENTAL_HEALTH_MULT = 2.0
-local ACU_REGEN_ADD = 60
-local RADAR_RADIUS_MULT = 2.0
-local SCOUT_VISION_MULT = 2.0
-local ECO_PRODUCTION_MULT = 2.5
-local ANTIAIR_DAMAGE_MULT = 2.5
-local LAND_ROF_MULT = 2.0
-local ARTILLERY_RANGE_MULT = 1.5
-local TACTICAL_RANGE_MULT = 2.0
-local SHIELD_HEALTH_MULT = 2.0
-local MOBILE_SHIELD_HEALTH_MULT = 2.0
+local BuffDraftConfig = import('/mods/BuffDraft/lua/config.lua')
 
-local DRONE_FOUNDRY_INTERVAL = 45 -- game seconds between spawn waves
-local DRONE_FOUNDRY_MAX_PER_WAVE = 4 -- at most this many factories spawn per wave
-local ENGINEER_SWARM_INTERVAL = 60
-local ENGINEER_SWARM_MAX_PER_WAVE = 2
-local EMERGENCY_FAB_BUILD_MULT = 3.0
-local OVERCHARGED_SHIELD_MULT = 2.5
-local NAPALM_RADIUS_ADD = 1.0 -- flat damage-radius add, world units
-local TELEPORT_SPEED_MULT = 2.0
-local NANO_REGEN_ADD = 5
-local EXP_DISCOUNT_BUILD_MULT = 2.5
-local RAPID_SPEED_MULT = 2.0
-local RAPID_DURATION = 60 -- seconds (buff system Duration is in game seconds)
-local FORTRESS_HP_MULT = 3.0
-local FORTRESS_SPEED_MULT = 0.85
-local HUNTER_VISION_MULT = 2.0
-local HUNTER_RADAR_MULT = 2.0
-local HUNTER_SPEED_MULT = 1.5
-local BLACK_MARKET_MASS_FRACTION = 0.1
-local BLACK_MARKET_ENERGY_FRACTION = 0.1
-local TAC_SUPREMACY_RANGE_MULT = 3.0
-local TAC_SUPREMACY_BUILD_MULT = 2.0
-local AIR_SUP_SPEED_MULT = 2.0
-local AIR_SUP_DAMAGE_MULT = 1.5
-local AIR_SUP_HP_MULT = 0.75
-local DREADNOUGHT_HP_MULT = 3.0
-local DREADNOUGHT_RANGE_MULT = 1.5
-local OMNISCIENCE_OMNI_MULT = 3.0
-local OMNISCIENCE_RADAR_MULT = 2.5
+-- nil-safe knob read
+local function Knob(name, default)
+    local value = BuffDraftConfig[name]
+    if value == nil then
+        return default
+    end
+    return value
+end
+
+local ENGINEER_BUILD_RATE_MULT = Knob('ENGINEER_BUILD_RATE_MULT', 5.0)
+local FACTORY_BUILD_RATE_MULT = Knob('FACTORY_BUILD_RATE_MULT', 3.0)
+local AIR_SPEED_MULT = Knob('AIR_SPEED_MULT', 1.25)
+local NAVAL_ARMOR_MULT = Knob('NAVAL_ARMOR_MULT', 2.5)
+local EXPERIMENTAL_HEALTH_MULT = Knob('EXPERIMENTAL_HEALTH_MULT', 2.0)
+local ACU_REGEN_ADD = Knob('ACU_REGEN_ADD', 60)
+local RADAR_RADIUS_MULT = Knob('RADAR_RADIUS_MULT', 2.0)
+local SCOUT_VISION_MULT = Knob('SCOUT_VISION_MULT', 2.0)
+local ECO_PRODUCTION_MULT = Knob('ECO_PRODUCTION_MULT', 2.5)
+local ANTIAIR_DAMAGE_MULT = Knob('ANTIAIR_DAMAGE_MULT', 2.5)
+local LAND_ROF_MULT = Knob('LAND_ROF_MULT', 2.0)
+local ARTILLERY_RANGE_MULT = Knob('ARTILLERY_RANGE_MULT', 1.5)
+local TACTICAL_RANGE_MULT = Knob('TACTICAL_RANGE_MULT', 2.0)
+local SHIELD_HEALTH_MULT = Knob('SHIELD_HEALTH_MULT', 2.0)
+local MOBILE_SHIELD_HEALTH_MULT = Knob('MOBILE_SHIELD_HEALTH_MULT', 2.0)
+
+local DRONE_FOUNDRY_INTERVAL = Knob('DRONE_FOUNDRY_INTERVAL', 45)
+local DRONE_FOUNDRY_MAX_PER_WAVE = Knob('DRONE_FOUNDRY_MAX_PER_WAVE', 4)
+local ENGINEER_SWARM_INTERVAL = Knob('ENGINEER_SWARM_INTERVAL', 60)
+local ENGINEER_SWARM_MAX_PER_WAVE = Knob('ENGINEER_SWARM_MAX_PER_WAVE', 2)
+local EMERGENCY_FAB_BUILD_MULT = Knob('EMERGENCY_FAB_BUILD_MULT', 3.0)
+local OVERCHARGED_SHIELD_MULT = Knob('OVERCHARGED_SHIELD_MULT', 2.5)
+local NAPALM_RADIUS_ADD = Knob('NAPALM_RADIUS_ADD', 1.0)
+local TELEPORT_SPEED_MULT = Knob('TELEPORT_SPEED_MULT', 2.0)
+local NANO_REGEN_ADD = Knob('NANO_REGEN_ADD', 5)
+local EXP_DISCOUNT_BUILD_MULT = Knob('EXP_DISCOUNT_BUILD_MULT', 2.5)
+local RAPID_SPEED_MULT = Knob('RAPID_SPEED_MULT', 2.0)
+local RAPID_DURATION = Knob('RAPID_DURATION', 60) -- buff Duration is in game seconds
+local FORTRESS_HP_MULT = Knob('FORTRESS_HP_MULT', 3.0)
+local FORTRESS_SPEED_MULT = Knob('FORTRESS_SPEED_MULT', 0.85)
+local HUNTER_VISION_MULT = Knob('HUNTER_VISION_MULT', 2.0)
+local HUNTER_RADAR_MULT = Knob('HUNTER_RADAR_MULT', 2.0)
+local HUNTER_SPEED_MULT = Knob('HUNTER_SPEED_MULT', 1.5)
+local BLACK_MARKET_MASS_FRACTION = Knob('BLACK_MARKET_MASS_FRACTION', 0.1)
+local BLACK_MARKET_ENERGY_FRACTION = Knob('BLACK_MARKET_ENERGY_FRACTION', 0.1)
+local SALVAGE_EXPLOSION_CHANCE = Knob('SALVAGE_EXPLOSION_CHANCE', 25)
+local SALVAGE_EXPLOSION_RADIUS = Knob('SALVAGE_EXPLOSION_RADIUS', 3)
+local SALVAGE_EXPLOSION_DAMAGE = Knob('SALVAGE_EXPLOSION_DAMAGE', 150)
+local ORBITAL_LANCE_COOLDOWN = Knob('ORBITAL_LANCE_COOLDOWN', 90)
+local ORBITAL_LANCE_TICKS = Knob('ORBITAL_LANCE_TICKS', 5)
+local ORBITAL_LANCE_TICK_DAMAGE = Knob('ORBITAL_LANCE_TICK_DAMAGE', 800)
+local ORBITAL_LANCE_RADIUS = Knob('ORBITAL_LANCE_RADIUS', 5)
+local ORBITAL_LANCE_TICK_INTERVAL = Knob('ORBITAL_LANCE_TICK_INTERVAL', 0.4)
+local ORBITAL_LANCE_SHIELD_SCAN_RADIUS = 160 -- covers stock bubble shields incl. shield boats
+local CHAIN_BEAM_DAMAGE_MULT = Knob('CHAIN_BEAM_DAMAGE_MULT', 1.5)
+local CHAIN_BEAM_RADIUS_ADD = Knob('CHAIN_BEAM_RADIUS_ADD', 1.5)
+local RECLAIM_RATE_MULT = Knob('RECLAIM_RATE_MULT', 2.0)
+local TAC_SUPREMACY_RANGE_MULT = Knob('TAC_SUPREMACY_RANGE_MULT', 3.0)
+local TAC_SUPREMACY_BUILD_MULT = Knob('TAC_SUPREMACY_BUILD_MULT', 2.0)
+local MISSILE_STORM_ROF_MULT = Knob('MISSILE_STORM_ROF_MULT', 2.5)
+local MISSILE_STORM_BUILD_MULT = Knob('MISSILE_STORM_BUILD_MULT', 2.5)
+local AIR_SUP_SPEED_MULT = Knob('AIR_SUP_SPEED_MULT', 2.0)
+local AIR_SUP_DAMAGE_MULT = Knob('AIR_SUP_DAMAGE_MULT', 1.5)
+local AIR_SUP_HP_MULT = Knob('AIR_SUP_HP_MULT', 0.75)
+local DREADNOUGHT_HP_MULT = Knob('DREADNOUGHT_HP_MULT', 3.0)
+local DREADNOUGHT_RANGE_MULT = Knob('DREADNOUGHT_RANGE_MULT', 1.5)
+local OMNISCIENCE_OMNI_MULT = Knob('OMNISCIENCE_OMNI_MULT', 3.0)
+local OMNISCIENCE_RADAR_MULT = Knob('OMNISCIENCE_RADAR_MULT', 2.5)
+
+LOG("FAF_BUFF_DRAFT: orbital_lance config cooldown=" .. tostring(ORBITAL_LANCE_COOLDOWN)
+    .. " ticks=" .. tostring(ORBITAL_LANCE_TICKS)
+    .. " dmg=" .. tostring(ORBITAL_LANCE_TICK_DAMAGE)
+    .. " r=" .. tostring(ORBITAL_LANCE_RADIUS))
 
 -- faction index (1 UEF, 2 Aeon, 3 Cybran, 4 Seraphim) -> blueprint id
 local DRONE_TANK_BPS = { 'uel0201', 'ual0201', 'url0107', 'xsl0201' }
@@ -275,6 +306,26 @@ BuffBlueprint {
 }
 
 BuffBlueprint {
+    Name = 'BuffDraftReclaimRate1',
+    DisplayName = 'Reclaim Bonus (speed)',
+    BuffType = 'BUFFDRAFTRECLAIMRATE',
+    Stacks = 'IGNORE',
+    Duration = -1,
+    EntityCategory = 'ALLUNITS',
+    Affects = { BuildRate = { Add = 0, Mult = RECLAIM_RATE_MULT } },
+}
+
+BuffBlueprint {
+    Name = 'BuffDraftMissileStormBuild1',
+    DisplayName = 'Missile Storm (missile build)',
+    BuffType = 'BUFFDRAFTMSSTORMBUILD', -- own type: stacks with BUFFDRAFTTACBUILD
+    Stacks = 'IGNORE',
+    Duration = -1,
+    EntityCategory = 'ALLUNITS',
+    Affects = { BuildRate = { Add = 0, Mult = MISSILE_STORM_BUILD_MULT } },
+}
+
+BuffBlueprint {
     Name = 'BuffDraftTacSupremacyBuild1',
     DisplayName = 'Tactical Supremacy (missile build)',
     BuffType = 'BUFFDRAFTTACBUILD',
@@ -403,6 +454,22 @@ local function WeaponDamageRadiusAdd(rangeCategory, add)
     end
 end
 
+-- Chain-lightning approximation: beam/laser weapons only. Every beam weapon
+-- blueprint has BeamLifetime (DefaultBeamWeapon aborts setup without it), so its
+-- presence is a reliable per-blueprint "this is a beam" marker. Beam damage goes
+-- through the weapon damage table, so ChangeDamage and AddDamageRadiusMod both
+-- apply (CollisionBeam:DoDamage uses DamageData.DamageRadius via DamageArea).
+local function BeamWeaponBoost(damageMult, radiusAdd)
+    return function(unit)
+        ForEachWeapon(unit, nil, function(wep, bp, i)
+            if bp.BeamLifetime ~= nil then
+                wep:ChangeDamage((bp.Damage or 0) * CombinedWeaponMult(unit, 'dmg', i, damageMult))
+                wep:AddDamageRadiusMod(radiusAdd)
+            end
+        end)
+    end
+end
+
 -- The shield is a separate entity (unit.MyShield, created by the base
 -- Unit.OnStopBeingBuilt) with the standard entity health API. Recomputes from the
 -- current max, so different shield buffs stack multiplicatively.
@@ -425,8 +492,22 @@ end
 
 --#region army-level effects (spawn threads, kill bounty)
 
--- armies with black_market_economy_1 active; consulted by the OnKilledUnit hook
+-- armies with black_market_economy_1 / salvage_explosion_1 active; consulted by
+-- the OnKilledUnit hook
 local BlackMarketArmies = {}
+local SalvageExplosionArmies = {}
+
+-- "<buffId>:<armyIndex>" -> generation counter. A spawn thread only keeps running
+-- while its own generation is the current one; both the admin remove AND a
+-- re-grant bump the counter, so a remove+re-grant inside one wait interval can
+-- never leave two threads spawning for the same buff+army.
+local SpawnThreadGeneration = {}
+
+local function BumpSpawnGeneration(buffId, armyIndex)
+    local key = buffId .. ":" .. tostring(armyIndex)
+    SpawnThreadGeneration[key] = (SpawnThreadGeneration[key] or 0) + 1
+    return SpawnThreadGeneration[key]
+end
 
 local function FactionBlueprint(brain, bpByFaction)
     return bpByFaction[brain:GetFactionIndex()] or bpByFaction[1]
@@ -434,18 +515,19 @@ end
 
 -- Periodically spawns free units next to finished land factories. CreateUnitHPR is
 -- the standard sim spawn call (scenario scripts, pods, external factories).
-local function FactorySpawnThread(buffId, armyIndex, bpByFaction, interval, maxPerWave)
+local function FactorySpawnThread(buffId, armyIndex, bpByFaction, interval, maxPerWave, myGeneration)
     local brain = ArmyBrains[armyIndex]
     if not brain then
         return
     end
+    local flagKey = buffId .. ":" .. tostring(armyIndex)
     local bpId = FactionBlueprint(brain, bpByFaction)
     LOG("FAF_BUFF_DRAFT: " .. buffId .. " spawn thread started army=" .. tostring(armyIndex)
         .. " bp=" .. tostring(bpId) .. " interval=" .. tostring(interval))
-    while ArmyBrains[armyIndex] do
+    while ArmyBrains[armyIndex] and SpawnThreadGeneration[flagKey] == myGeneration do
         WaitSeconds(interval)
         brain = ArmyBrains[armyIndex]
-        if not brain then
+        if (not brain) or (SpawnThreadGeneration[flagKey] ~= myGeneration) then
             break
         end
         local factories = brain:GetListOfUnits(
@@ -468,6 +550,367 @@ local function FactorySpawnThread(buffId, armyIndex, bpByFaction, interval, maxP
                 .. "x " .. tostring(bpId) .. " for army " .. tostring(armyIndex))
         end
     end
+    LOG("FAF_BUFF_DRAFT: " .. buffId .. " spawn thread stopped army=" .. tostring(armyIndex))
+end
+
+local function FindOrbitalInstigator(brain)
+    local priority = {
+        categories.COMMAND + categories.SUBCOMMANDER,
+        categories.ALLUNITS - categories.WALL,
+    }
+    for _, cat in priority do
+        for _, unit in brain:GetListOfUnits(cat, false, false) or {} do
+            if unit and (not unit.Dead) then
+                return unit
+            end
+        end
+    end
+    return nil
+end
+
+local function PointInShieldBubble(pos, shield)
+    if (not shield) or shield.ShieldType == "Personal" or (not shield.Size) or shield.Size <= 0 then
+        return false
+    end
+    if (not shield.IsUp) or (not shield:IsUp()) then
+        return false
+    end
+    local spos = shield:GetPosition()
+    local dx = spos[1] - pos[1]
+    local dz = spos[3] - pos[3]
+    local radius = 0.5 * shield.Size
+    return dx * dx + dz * dz <= radius * radius
+end
+
+local function GetCoveringShieldBubbles(brain, pos)
+    local shields = {}
+    for _, shieldUnit in brain:GetUnitsAroundPoint(
+        categories.SHIELD, pos, ORBITAL_LANCE_SHIELD_SCAN_RADIUS) or {} do
+        local shield = shieldUnit.MyShield
+        if shieldUnit and (not shieldUnit.Dead) and PointInShieldBubble(pos, shield) then
+            table.insert(shields, { unit = shieldUnit, shield = shield })
+        end
+    end
+    return shields
+end
+
+local function PlayOrbitalPointFx(armyIndex, pos)
+    local Entity = import('/lua/sim/entity.lua').Entity
+    local EffectTemplates = import('/lua/EffectTemplates.lua')
+    local fxEntity = Entity()
+    Warp(fxEntity, pos)
+    for _, effect in EffectTemplates.ExplosionLarge do
+        CreateEmitterAtEntity(fxEntity, armyIndex, effect)
+    end
+    CreateLightParticle(fxEntity, -1, armyIndex, 8, 12, 'glow_03', 'ramp_red_06')
+    WaitSeconds(2)
+    fxEntity:Destroy()
+end
+
+local function DebugWatchUnits(brain, pos)
+    local debugOn = import('/mods/BuffDraft/lua/config.lua').DebugAdmin
+    if not debugOn then
+        return nil
+    end
+    local watched = {}
+    local enemies = brain:GetUnitsAroundPoint(
+        categories.ALLUNITS, pos, ORBITAL_LANCE_RADIUS, 'Enemy') or {}
+    LOG("FAF_BUFF_DRAFT: orbital_lance_1 debug units before: enemies="
+        .. tostring(table.getn(enemies)))
+    for _, unit in enemies do
+        if not unit.Dead then
+            LOG("FAF_BUFF_DRAFT: orbital_lance_1 debug units before enemy "
+                .. UnitLabel(unit) .. " hp=" .. tostring(unit:GetHealth()))
+            table.insert(watched, { unit = unit, hp = unit:GetHealth() })
+        end
+    end
+    return watched
+end
+
+local function DebugReportUnits(watched)
+    if not watched then
+        return
+    end
+    local affected = 0
+    for _, entry in watched do
+        local unit = entry.unit
+        if unit.Dead then
+            affected = affected + 1
+        else
+            local hp = unit:GetHealth()
+            LOG("FAF_BUFF_DRAFT: orbital_lance_1 debug units after enemy "
+                .. UnitLabel(unit) .. " hp=" .. tostring(hp))
+            if hp < entry.hp then
+                affected = affected + 1
+            end
+        end
+    end
+    LOG("FAF_BUFF_DRAFT: orbital_lance_1 debug affected enemies="
+        .. tostring(affected) .. " of " .. tostring(table.getn(watched)))
+end
+
+local function ApplyShieldAwareOrbitalDamage(instigator, brain, pos, amount, tick)
+    local remaining = amount
+    local shields = GetCoveringShieldBubbles(brain, pos)
+    LOG("FAF_BUFF_DRAFT: orbital_lance_1 shield check tick=" .. tostring(tick)
+        .. " covering=" .. tostring(table.getn(shields))
+        .. " incoming=" .. tostring(amount))
+
+    for _, entry in shields do
+        if remaining <= 0 then
+            break
+        end
+        local shield = entry.shield
+        if PointInShieldBubble(pos, shield) then
+            local before = shield:GetHealth()
+            local after = before
+            local okShield, errShield = pcall(function()
+                shield:ApplyDamage(instigator, remaining, Vector(0, -1, 0), 'Normal', false)
+                after = math.max(0, shield:GetHealth())
+            end)
+            if not okShield then
+                WARN("FAF_BUFF_DRAFT: orbital_lance_1 shield damage API failed; blocking ground damage: "
+                    .. tostring(errShield))
+                remaining = 0
+                break
+            end
+            local absorbed = math.max(0, before - after)
+            remaining = math.max(0, remaining - absorbed)
+            LOG("FAF_BUFF_DRAFT: orbital_lance_1 shield absorbed/blocked tick="
+                .. tostring(tick) .. " by " .. UnitLabel(entry.unit)
+                .. " hp=" .. tostring(before) .. "->" .. tostring(after)
+                .. " absorbed=" .. tostring(absorbed)
+                .. " remaining=" .. tostring(remaining))
+            if shield:IsUp() and shield:GetHealth() > 0 then
+                remaining = 0
+                break
+            end
+        end
+    end
+
+    if remaining > 0 then
+        LOG("FAF_BUFF_DRAFT: orbital_lance_1 spill damage tick=" .. tostring(tick)
+            .. " amount=" .. tostring(remaining)
+            .. " r=" .. tostring(ORBITAL_LANCE_RADIUS))
+        DamageArea(instigator, pos, ORBITAL_LANCE_RADIUS, remaining, 'Normal', true, true)
+    end
+end
+
+-- Stable strike thread. Visuals use only point FX on a temporary bare entity.
+-- Damage is shield-aware DamageArea: covering bubble shields take the pulse first;
+-- ground damage happens only when no shield covers the point or the shield is
+-- depleted by the pulse. No projectiles or temporary beam attachments are used.
+local function OrbitalDamageAreaThread(armyIndex, brain, pos, instigator)
+    local watched = DebugWatchUnits(brain, pos)
+    for tick = 1, ORBITAL_LANCE_TICKS do
+        ForkThread(PlayOrbitalPointFx, armyIndex, pos)
+        ApplyShieldAwareOrbitalDamage(instigator, brain, pos, ORBITAL_LANCE_TICK_DAMAGE, tick)
+        WaitSeconds(ORBITAL_LANCE_TICK_INTERVAL)
+    end
+    DebugReportUnits(watched)
+end
+
+-- Starts the strike at a position. Returns success immediately after the strike
+-- thread is forked (the caller charges the cooldown then); everything async
+-- happens in OrbitalDamageAreaThread.
+local function ExecuteOrbitalStrike(armyIndex, brain, pos)
+    local instigator = FindOrbitalInstigator(brain)
+    if not instigator then
+        return false, "no valid instigator unit"
+    end
+    LOG("FAF_BUFF_DRAFT: orbital_lance_1 unsafe projectile path disabled; using DamageArea")
+    LOG("FAF_BUFF_DRAFT: orbital_lance_1 damage-area strike started at "
+        .. tostring(pos[1]) .. "," .. tostring(pos[3]) .. " army=" .. tostring(armyIndex)
+        .. " (" .. tostring(ORBITAL_LANCE_TICKS) .. " ticks x "
+        .. tostring(ORBITAL_LANCE_TICK_DAMAGE) .. " dmg, r=" .. tostring(ORBITAL_LANCE_RADIUS)
+        .. ", over ~2s)")
+    ForkThread(OrbitalDamageAreaThread, armyIndex, brain, pos, instigator)
+    return true, nil
+end
+
+-- Orbital lance strike (triggered via the active-buff framework). With a valid
+-- payload point ({x, z} world coords from the targeting UI, validated here) the
+-- strike hits that point; without one it falls back to a random enemy structure
+-- this army has identified (GetBlip + IsSeenEver - the SimObjectives "has been
+-- seen" pattern). Returns success plus a reason on failure; a failed strike does
+-- not charge the cooldown.
+local function OrbitalLanceStrike(armyIndex, payload)
+    local brain = ArmyBrains[armyIndex]
+    if not brain then
+        return false, "no army brain"
+    end
+    local sizeX = ScenarioInfo.size[1]
+    local sizeZ = ScenarioInfo.size[2]
+
+    -- manual target point from the UI (sim-side validation: numbers, map bounds)
+    local px = payload and tonumber(payload.x)
+    local pz = payload and tonumber(payload.z)
+    if px and pz then
+        if px < 0 or px > sizeX or pz < 0 or pz > sizeZ then
+            return false, "target point out of map bounds"
+        end
+        local pos = Vector(px, GetSurfaceHeight(px, pz), pz)
+        LOG("FAF_BUFF_DRAFT: orbital_lance_1 strike at point "
+            .. tostring(px) .. "," .. tostring(pz) .. " army=" .. tostring(armyIndex))
+        return ExecuteOrbitalStrike(armyIndex, brain, pos)
+    end
+
+    -- auto-target fallback (no or invalid point payload)
+    local center = Vector(sizeX / 2, 0, sizeZ / 2)
+    local scanRadius = math.max(sizeX, sizeZ)
+    local candidates = brain:GetUnitsAroundPoint(
+        categories.STRUCTURE, center, scanRadius, 'Enemy') or {}
+    local visible = {}
+    for _, target in candidates do
+        if not target.Dead then
+            local blip = target:GetBlip(armyIndex)
+            if blip and blip:IsSeenEver(armyIndex) then
+                table.insert(visible, target)
+            end
+        end
+    end
+    local count = table.getn(visible)
+    if count == 0 then
+        return false, "no identified enemy structure"
+    end
+    local target = visible[Random(1, count)]
+    local pos = target:GetPosition()
+    if (not pos) or target.Dead then
+        return false, "target lost"
+    end
+    LOG("FAF_BUFF_DRAFT: orbital_lance_1 auto-target strike at " .. UnitLabel(target)
+        .. " army=" .. tostring(armyIndex))
+    return ExecuteOrbitalStrike(armyIndex, brain, pos)
+end
+
+--#endregion
+
+--#region active buffs (player-triggered abilities with a per-army cooldown)
+-- Generic framework, currently used only by orbital_lance_1. The UI shows an
+-- Activate button per owned active buff and sends BuffDraftUseActive; everything
+-- (ownership, cooldown, effect) is validated and executed sim-side. Cooldowns are
+-- game-time (GetGameTimeSeconds); state is pushed to the UI once a second so the
+-- countdown ticks without any UI-side timekeeping.
+
+-- buffId -> { cooldown (game seconds), use = fn(armyIndex, payload) -> ok, reason }
+local ActiveBuffDefs = {
+    orbital_lance_1 = {
+        cooldown = ORBITAL_LANCE_COOLDOWN,
+        use = OrbitalLanceStrike,
+    },
+}
+
+-- armyIndex -> buffId -> { cooldownUntil = gameSeconds, lastUsed = gameSeconds|nil }
+local ActiveBuffState = {}
+local ActiveSyncThreadStarted = false
+
+--- SIM API: current state of every registered active buff, as plain data.
+function GetActiveBuffSyncState()
+    local now = GetGameTimeSeconds()
+    local states = {}
+    for armyIndex, buffs in ActiveBuffState do
+        for buffId, state in buffs do
+            local remaining = math.max(0, math.ceil(state.cooldownUntil - now))
+            table.insert(states, {
+                army = armyIndex,
+                buffId = buffId,
+                ready = remaining == 0,
+                remaining = remaining,
+                cooldown = ActiveBuffDefs[buffId].cooldown,
+                lastUsed = state.lastUsed,
+            })
+        end
+    end
+    return states
+end
+
+local function SyncActiveBuffStates()
+    Sync.BuffDraft = Sync.BuffDraft or {}
+    table.insert(Sync.BuffDraft, { event = "active", states = GetActiveBuffSyncState() })
+end
+
+-- one broadcaster for all armies/buffs; started on the first registration
+local function ActiveSyncThread()
+    while true do
+        WaitSeconds(1)
+        SyncActiveBuffStates()
+    end
+end
+
+local function RegisterActiveBuff(armyIndex, buffId)
+    ActiveBuffState[armyIndex] = ActiveBuffState[armyIndex] or {}
+    if ActiveBuffState[armyIndex][buffId] then
+        return
+    end
+    ActiveBuffState[armyIndex][buffId] = { cooldownUntil = 0, lastUsed = nil }
+    LOG("FAF_BUFF_DRAFT: active buff " .. tostring(buffId) .. " registered for army "
+        .. tostring(armyIndex) .. ", ready")
+    if not ActiveSyncThreadStarted then
+        ActiveSyncThreadStarted = true
+        ForkThread(ActiveSyncThread)
+    end
+    SyncActiveBuffStates()
+end
+
+local function UnregisterActiveBuff(armyIndex, buffId)
+    local byArmy = ActiveBuffState[armyIndex]
+    if byArmy and byArmy[buffId] then
+        byArmy[buffId] = nil
+        SyncActiveBuffStates()
+        LOG("FAF_BUFF_DRAFT: active buff " .. tostring(buffId) .. " unregistered for army "
+            .. tostring(armyIndex))
+    end
+end
+
+--- SIM API: can this army use this active buff right now?
+function CanUseActiveBuff(armyIndex, buffId)
+    local def = ActiveBuffDefs[buffId]
+    if not def then
+        return false, "not an active buff"
+    end
+    local byArmy = ActiveBuffState[armyIndex]
+    local state = byArmy and byArmy[buffId]
+    if not state then
+        return false, "army does not own this buff"
+    end
+    local now = GetGameTimeSeconds()
+    if now < state.cooldownUntil then
+        return false, "on cooldown, " .. tostring(math.ceil(state.cooldownUntil - now)) .. "s left"
+    end
+    return true, nil
+end
+
+--- SIM API: validate and execute an active buff. Called from the BuffDraftUseActive
+--- SimCallback with the sender's army - the UI cannot use another army's buff.
+--- A use that had no effect (e.g. no visible target) does not charge the cooldown.
+function UseActiveBuff(armyIndex, buffId, payload)
+    local ok, reason = CanUseActiveBuff(armyIndex, buffId)
+    if not ok then
+        LOG("FAF_BUFF_DRAFT: active use rejected army=" .. tostring(armyIndex)
+            .. " buff=" .. tostring(buffId) .. ": " .. tostring(reason))
+        return
+    end
+    local def = ActiveBuffDefs[buffId]
+    -- def.use behind pcall: a bug inside the effect must fail this one activation
+    -- (cooldown not charged), not abort the whole sim callback
+    local okCall, success, failReason = pcall(def.use, armyIndex, payload)
+    if not okCall then
+        WARN("FAF_BUFF_DRAFT: " .. tostring(buffId) .. " activation errored: " .. tostring(success))
+        success = false
+        failReason = "internal error"
+    end
+    if success then
+        local now = GetGameTimeSeconds()
+        local state = ActiveBuffState[armyIndex][buffId]
+        state.lastUsed = now
+        state.cooldownUntil = now + def.cooldown
+        LOG("FAF_BUFF_DRAFT: " .. tostring(buffId) .. " activated by army "
+            .. tostring(armyIndex) .. ", cooldown " .. tostring(def.cooldown) .. "s")
+    else
+        LOG("FAF_BUFF_DRAFT: " .. tostring(buffId) .. " activation had no effect: "
+            .. tostring(failReason) .. " (cooldown not charged)")
+    end
+    SyncActiveBuffStates()
 end
 
 --#endregion
@@ -526,34 +969,43 @@ local BuffSpecs = {
     -- weapon buffs: custom per-weapon application so only the intended weapon type
     -- is changed (the stock Damage/RateOfFire/MaxRadius affects hit ALL weapons of
     -- the unit, which is wrong e.g. for cruisers with AA + surface missiles)
+    -- custom parts carry `unapply` (the same helper with the inverse value) so the
+    -- admin remove can restore current units; helpers recompute from the blueprint
+    -- via the combined-mult table, so apply+unapply lands back on the stock value
     anti_air_damage_1 = { method = "per-weapon ChangeDamage", parts = { {
         name = 'BuffDraftAntiAirDamage1', kind = 'custom',
         apply = WeaponDamageMult('UWRC_AntiAir', ANTIAIR_DAMAGE_MULT),
+        unapply = WeaponDamageMult('UWRC_AntiAir', 1 / ANTIAIR_DAMAGE_MULT),
         category = categories.ANTIAIR, when = 'built',
     } } },
     land_rate_of_fire_1 = { method = "per-weapon ChangeRateOfFire", parts = { {
         name = 'BuffDraftLandRateOfFire1', kind = 'custom',
         apply = WeaponRateOfFireMult('UWRC_DirectFire', LAND_ROF_MULT),
+        unapply = WeaponRateOfFireMult('UWRC_DirectFire', 1 / LAND_ROF_MULT),
         category = categories.LAND * categories.MOBILE, when = 'built',
     } } },
     artillery_range_1 = { method = "per-weapon ChangeMaxRadius", parts = { {
         name = 'BuffDraftArtilleryRange1', kind = 'custom',
         apply = WeaponRangeMult('UWRC_IndirectFire', ARTILLERY_RANGE_MULT),
+        unapply = WeaponRangeMult('UWRC_IndirectFire', 1 / ARTILLERY_RANGE_MULT),
         category = categories.ARTILLERY, when = 'built',
     } } },
     tactical_range_1 = { method = "per-weapon ChangeMaxRadius", parts = { {
         name = 'BuffDraftTacticalRange1', kind = 'custom',
         apply = WeaponRangeMult(nil, TACTICAL_RANGE_MULT), -- TML structures have a single weapon
+        unapply = WeaponRangeMult(nil, 1 / TACTICAL_RANGE_MULT),
         category = categories.TACTICALMISSILEPLATFORM, when = 'built',
     } } },
     shield_health_1 = { method = "shield entity SetMaxHealth", parts = { {
         name = 'BuffDraftShieldHealth1', kind = 'custom',
         apply = ShieldMaxHealthMult(SHIELD_HEALTH_MULT),
+        unapply = ShieldMaxHealthMult(1 / SHIELD_HEALTH_MULT),
         category = categories.STRUCTURE * categories.SHIELD, when = 'built',
     } } },
     mobile_shields_1 = { method = "shield entity SetMaxHealth", parts = { {
         name = 'BuffDraftMobileShields1', kind = 'custom',
         apply = ShieldMaxHealthMult(MOBILE_SHIELD_HEALTH_MULT),
+        unapply = ShieldMaxHealthMult(1 / MOBILE_SHIELD_HEALTH_MULT),
         category = categories.MOBILE * categories.SHIELD, when = 'built',
     } } },
 
@@ -562,14 +1014,22 @@ local BuffSpecs = {
         method = "CreateUnitHPR spawn thread (free T1 tanks at land factories)",
         armyApply = function(buffId, armyIndex)
             ForkThread(FactorySpawnThread, buffId, armyIndex, DRONE_TANK_BPS,
-                DRONE_FOUNDRY_INTERVAL, DRONE_FOUNDRY_MAX_PER_WAVE)
+                DRONE_FOUNDRY_INTERVAL, DRONE_FOUNDRY_MAX_PER_WAVE,
+                BumpSpawnGeneration(buffId, armyIndex))
+        end,
+        armyRemove = function(buffId, armyIndex)
+            BumpSpawnGeneration(buffId, armyIndex) -- invalidates the running thread
         end,
     },
     engineer_swarm_1 = {
         method = "CreateUnitHPR spawn thread (free T1 engineers at land factories)",
         armyApply = function(buffId, armyIndex)
             ForkThread(FactorySpawnThread, buffId, armyIndex, SWARM_ENGINEER_BPS,
-                ENGINEER_SWARM_INTERVAL, ENGINEER_SWARM_MAX_PER_WAVE)
+                ENGINEER_SWARM_INTERVAL, ENGINEER_SWARM_MAX_PER_WAVE,
+                BumpSpawnGeneration(buffId, armyIndex))
+        end,
+        armyRemove = function(buffId, armyIndex)
+            BumpSpawnGeneration(buffId, armyIndex) -- invalidates the running thread
         end,
     },
     -- conditional build-rate buffs: activation only sets the army flag; the actual
@@ -599,6 +1059,7 @@ local BuffSpecs = {
         parts = { {
             name = 'BuffDraftOverchargedShields1', kind = 'custom',
             apply = ShieldMaxHealthMult(OVERCHARGED_SHIELD_MULT),
+            unapply = ShieldMaxHealthMult(1 / OVERCHARGED_SHIELD_MULT),
             category = categories.SHIELD, when = 'built',
         } },
     },
@@ -609,11 +1070,13 @@ local BuffSpecs = {
             {
                 name = 'BuffDraftNapalmDirect1', kind = 'custom',
                 apply = WeaponDamageRadiusAdd('UWRC_DirectFire', NAPALM_RADIUS_ADD),
+                unapply = WeaponDamageRadiusAdd('UWRC_DirectFire', -NAPALM_RADIUS_ADD),
                 category = categories.LAND * categories.MOBILE, when = 'built',
             },
             {
                 name = 'BuffDraftNapalmArtillery1', kind = 'custom',
                 apply = WeaponDamageRadiusAdd('UWRC_IndirectFire', NAPALM_RADIUS_ADD),
+                unapply = WeaponDamageRadiusAdd('UWRC_IndirectFire', -NAPALM_RADIUS_ADD),
                 category = categories.ARTILLERY, when = 'built',
             },
         },
@@ -677,6 +1140,81 @@ local BuffSpecs = {
         armyApply = function(buffId, armyIndex)
             BlackMarketArmies[armyIndex] = true
         end,
+        armyRemove = function(buffId, armyIndex)
+            BlackMarketArmies[armyIndex] = nil
+        end,
+    },
+    salvage_explosion_1 = {
+        method = "Unit.OnKilledUnit hook + DamageArea (explosion only, "
+            .. SALVAGE_EXPLOSION_CHANCE .. "% chance)",
+        armyApply = function(buffId, armyIndex)
+            SalvageExplosionArmies[armyIndex] = true
+            LOG("FAF_BUFF_DRAFT: salvage_explosion_1 reclaim bonus skipped: wreckage"
+                .. " values come from the victim blueprint at death, no safe per-instance API")
+        end,
+        armyRemove = function(buffId, armyIndex)
+            SalvageExplosionArmies[armyIndex] = nil
+        end,
+    },
+    orbital_lance_1 = {
+        method = "active buff framework: Activate -> click map -> shield-aware DamageArea"
+            .. " pulses (unsafe sky projectile/beam path disabled), "
+            .. ORBITAL_LANCE_COOLDOWN .. "s cooldown; auto-target fallback without a point",
+        armyApply = function(buffId, armyIndex)
+            RegisterActiveBuff(armyIndex, buffId)
+        end,
+        armyRemove = function(buffId, armyIndex)
+            UnregisterActiveBuff(armyIndex, buffId)
+        end,
+    },
+    chain_lightning_weapons_1 = {
+        method = "per-weapon ChangeDamage + AddDamageRadiusMod on beam weapons"
+            .. " (BeamLifetime blueprint marker)",
+        skipped = "skipped true chaining because arcing needs custom projectile/collision"
+            .. " scripts; approximated with x" .. CHAIN_BEAM_DAMAGE_MULT .. " damage"
+            .. " + " .. CHAIN_BEAM_RADIUS_ADD .. " splash on beam/laser weapons",
+        parts = { {
+            name = 'BuffDraftChainLightning1', kind = 'custom',
+            apply = BeamWeaponBoost(CHAIN_BEAM_DAMAGE_MULT, CHAIN_BEAM_RADIUS_ADD),
+            unapply = BeamWeaponBoost(1 / CHAIN_BEAM_DAMAGE_MULT, -CHAIN_BEAM_RADIUS_ADD),
+            category = categories.ALLUNITS, when = 'built',
+        } },
+    },
+    -- reclaim SPEED, not yield: reclaim rate is driven by build rate, so a
+    -- conditional BuildRate buff while the reclaim command runs makes reclaiming
+    -- faster; the total amount reclaimed does not change
+    reclaim_bonus_1 = {
+        method = "OnStartReclaim-conditional buff system BuildRate (x"
+            .. RECLAIM_RATE_MULT .. " reclaim speed)",
+        skipped = "skipped yield increase because reclaim value lives on props / the"
+            .. " engine reclaim command; approximated with faster reclaiming only",
+        conditionalReclaim = {
+            name = 'BuffDraftReclaimRate1', buffType = 'BUFFDRAFTRECLAIMRATE',
+            builderCategory = categories.ENGINEER,
+            active = {},
+        },
+    },
+    -- approximation: true multi-missile salvos are blueprint-only (MuzzleSalvoSize),
+    -- so emulate "more missiles in the air" with faster firing + faster missile
+    -- construction. RoF goes through CombinedWeaponMult, so it stacks with the
+    -- range mults of tactical_range_1 / tactical_supremacy_1 on the same weapon.
+    missile_storm_1 = {
+        method = "per-weapon ChangeRateOfFire + buff system BuildRate (missile construction)",
+        skipped = "MuzzleSalvoSize skipped: weapon blueprint data, no per-instance salvo API;"
+            .. " approximated with x" .. MISSILE_STORM_ROF_MULT .. " rate of fire"
+            .. " + x" .. MISSILE_STORM_BUILD_MULT .. " missile build rate",
+        parts = {
+            {
+                name = 'BuffDraftMissileStormRoF1', kind = 'custom',
+                apply = WeaponRateOfFireMult(nil, MISSILE_STORM_ROF_MULT),
+                unapply = WeaponRateOfFireMult(nil, 1 / MISSILE_STORM_ROF_MULT),
+                category = categories.TACTICALMISSILEPLATFORM, when = 'built',
+            },
+            {
+                name = 'BuffDraftMissileStormBuild1', kind = 'buff', buffType = 'BUFFDRAFTMSSTORMBUILD',
+                category = categories.TACTICALMISSILEPLATFORM, when = 'create',
+            },
+        },
     },
     tactical_supremacy_1 = {
         method = "per-weapon ChangeMaxRadius + buff system BuildRate (missile construction)",
@@ -684,6 +1222,7 @@ local BuffSpecs = {
             {
                 name = 'BuffDraftTacSupremacyRange1', kind = 'custom',
                 apply = WeaponRangeMult(nil, TAC_SUPREMACY_RANGE_MULT),
+                unapply = WeaponRangeMult(nil, 1 / TAC_SUPREMACY_RANGE_MULT),
                 category = categories.TACTICALMISSILEPLATFORM, when = 'built',
             },
             {
@@ -706,6 +1245,7 @@ local BuffSpecs = {
             {
                 name = 'BuffDraftAirSupDamage1', kind = 'custom',
                 apply = WeaponDamageMult(nil, AIR_SUP_DAMAGE_MULT),
+                unapply = WeaponDamageMult(nil, 1 / AIR_SUP_DAMAGE_MULT),
                 category = categories.AIR * categories.MOBILE, when = 'built',
             },
         },
@@ -720,6 +1260,7 @@ local BuffSpecs = {
             {
                 name = 'BuffDraftDreadnoughtRange1', kind = 'custom',
                 apply = WeaponRangeMult(nil, DREADNOUGHT_RANGE_MULT),
+                unapply = WeaponRangeMult(nil, 1 / DREADNOUGHT_RANGE_MULT),
                 category = categories.NAVAL * categories.MOBILE, when = 'built',
             },
         },
@@ -751,22 +1292,19 @@ end
 
 -- conditional-build entries collected for the OnStartBuild/OnStopBuild hooks
 local ConditionalBuildEntries = {}
+-- conditional-reclaim entries for the OnStartReclaim/OnStopReclaim hooks
+local ConditionalReclaimEntries = {}
 for _, spec in BuffSpecs do
     if spec.conditionalBuild then
         table.insert(ConditionalBuildEntries, spec.conditionalBuild)
     end
+    if spec.conditionalReclaim then
+        table.insert(ConditionalReclaimEntries, spec.conditionalReclaim)
+    end
 end
 
-local NotImplementedReasons = {
-    reclaim_bonus_1 = "reclaim yield lives on props / the engine reclaim command, no per-unit"
-        .. " instance API; scaling build rate instead would also change build speed",
-    missile_storm_1 = "MuzzleSalvoSize is weapon blueprint data; no per-instance salvo-size API",
-    orbital_lance_1 = "needs a target-point UI and a custom strike weapon; TODO",
-    chain_lightning_weapons_1 = "chaining needs custom projectile/weapon scripts, no safe"
-        .. " per-instance hook; TODO",
-    salvage_explosion_1 = "wreckage mass/explosions are computed from the victim blueprint at"
-        .. " death; buffing our side gives no safe handle on enemy wrecks",
-}
+-- every catalog buff currently has a spec; kept for future buffs without a safe API
+local NotImplementedReasons = {}
 
 --#endregion
 
@@ -826,6 +1364,10 @@ function ApplyPickedBuff(sideName, armies, buffId)
     end
 
     LOG("FAF_BUFF_DRAFT: " .. buffId .. " implemented via " .. spec.method)
+    if spec.skipped then
+        -- part of the described effect has no safe API; say what and why
+        LOG("FAF_BUFF_DRAFT: " .. buffId .. " " .. spec.skipped)
+    end
     LOG("FAF_BUFF_DRAFT: applying " .. buffId .. " to armies: " .. ArmiesToString(armies))
 
     for _, part in spec.parts or {} do
@@ -861,6 +1403,12 @@ function ApplyPickedBuff(sideName, armies, buffId)
         end
     end
 
+    if spec.conditionalReclaim then
+        for _, armyIndex in armies do
+            spec.conditionalReclaim.active[armyIndex] = true
+        end
+    end
+
     if spec.armyApply then
         spec.armyApplied = spec.armyApplied or {}
         for _, armyIndex in armies do
@@ -872,6 +1420,99 @@ function ApplyPickedBuff(sideName, armies, buffId)
     end
 
     LOG("FAF_BUFF_DRAFT: " .. buffId .. " future units hook active")
+end
+
+local function RemovePartFromUnit(buffId, part, unit)
+    if part.kind == 'buff' then
+        Buff.RemoveBuff(unit, part.name, true) -- guarded by HasBuffApplied at the call site
+    else
+        if not part.unapply then
+            return false
+        end
+        part.unapply(unit)
+        if unit.BuffDraftApplied then
+            unit.BuffDraftApplied[part.name] = nil
+        end
+    end
+    return true
+end
+
+--- SIM API (admin): inverse of ApplyPickedBuff. Deactivates the buff for future
+--- units and strips it from current units; army-level effects (spawn threads,
+--- kill flags, active abilities) are stopped via the spec's armyRemove. Returns
+--- fullyRemoved plus a notes string for the log. Already-spawned free units,
+--- already-granted resources and running timed buffs (they expire on their own)
+--- are NOT rolled back.
+function RemovePickedBuff(sideName, armies, buffId)
+    local spec = BuffSpecs[buffId]
+    if not spec then
+        return false, "no effect spec - nothing was ever applied"
+    end
+
+    local fully = true
+    local notes = {}
+
+    for _, part in spec.parts or {} do
+        -- future units: deactivate the army flags first
+        for _, armyIndex in armies do
+            part.active[armyIndex] = nil
+        end
+        -- current units
+        if part.kind == 'custom' and not part.unapply then
+            fully = false
+            table.insert(notes, part.name .. " has no unapply, disabled for future units only")
+        else
+            for _, armyIndex in armies do
+                local brain = ArmyBrains[armyIndex]
+                if brain then
+                    for _, unit in brain:GetListOfUnits(part.category, false, false) or {} do
+                        if (not unit.Dead) and HasBuffApplied(unit, part) then
+                            RemovePartFromUnit(buffId, part, unit)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    -- conditional build/reclaim buffs: deactivate and strip from anyone holding one
+    for _, entry in { spec.conditionalBuild, spec.conditionalReclaim } do
+        for _, armyIndex in armies do
+            entry.active[armyIndex] = nil
+            local brain = ArmyBrains[armyIndex]
+            if brain then
+                for _, unit in brain:GetListOfUnits(entry.builderCategory, false, false) or {} do
+                    if (not unit.Dead) and HasBuffOfType(unit, entry.buffType, entry.name) then
+                        Buff.RemoveBuff(unit, entry.name, true)
+                    end
+                end
+            end
+        end
+    end
+
+    -- army-level effects
+    if spec.armyApply then
+        if spec.armyRemove then
+            for _, armyIndex in armies do
+                spec.armyRemove(buffId, armyIndex)
+                if spec.armyApplied then
+                    spec.armyApplied[armyIndex] = nil -- allow a later re-grant to re-apply
+                end
+            end
+        else
+            fully = false
+            table.insert(notes, "army-level effect has no remove")
+        end
+    end
+
+    if buffId == 'drone_foundry_1' or buffId == 'engineer_swarm_1' then
+        table.insert(notes, "already spawned units stay")
+    end
+    if buffId == 'rapid_deployment_1' then
+        table.insert(notes, "running 60s speed buffs expire on their own")
+    end
+
+    return fully, table.concat(notes, "; ")
 end
 
 local function ApplyActivePartsToUnit(unit, when)
@@ -924,27 +1565,69 @@ function OnUnitStopBuild(builder)
     end
 end
 
---- Called from the Unit.OnKilledUnit hook. Black market bounty: killing an enemy
---- grants a fraction of its blueprint cost (GiveResource caps at storage).
+--- Called from the Unit.OnStartReclaim hook: engineers with reclaim_bonus_1 get a
+--- BuildRate buff for the duration of the reclaim (reclaim rate follows build rate).
+function OnUnitStartReclaim(unit)
+    if (not unit) or (not unit.Army) then
+        return
+    end
+    for _, entry in ConditionalReclaimEntries do
+        if entry.active[unit.Army] and EntityCategoryContains(entry.builderCategory, unit) then
+            Buff.ApplyBuff(unit, entry.name)
+        end
+    end
+end
+
+--- Called from the Unit.OnStopReclaim hook: removes the reclaim-speed buff.
+function OnUnitStopReclaim(unit)
+    if (not unit) or (not unit.Army) then
+        return
+    end
+    for _, entry in ConditionalReclaimEntries do
+        if entry.active[unit.Army] and HasBuffOfType(unit, entry.buffType, entry.name) then
+            Buff.RemoveBuff(unit, entry.name, true)
+        end
+    end
+end
+
+--- Called from the Unit.OnKilledUnit hook.
+--- Black market bounty: killing an enemy grants a fraction of its blueprint cost
+--- (GiveResource caps at storage). Salvage explosion: chance that the killed enemy
+--- detonates - a plain DamageArea at the victim position (same call DefaultDamage /
+--- EffectUtilities use); wreckage/reclaim values are untouched.
 function OnUnitKilledUnit(killer, victim)
-    if not BlackMarketArmies[killer.Army] then
+    if (not killer) or (not killer.Army) or (not victim) or (not victim.Army) then
         return
     end
-    if (not victim) or (not victim.Army) or (not IsEnemy(killer.Army, victim.Army)) then
+    if not IsEnemy(killer.Army, victim.Army) then
         return
     end
-    local brain = ArmyBrains[killer.Army]
-    if not brain then
-        return
+
+    if BlackMarketArmies[killer.Army] then
+        local brain = ArmyBrains[killer.Army]
+        if brain then
+            local eco = victim:GetBlueprint().Economy or {}
+            local mass = math.floor((eco.BuildCostMass or 0) * BLACK_MARKET_MASS_FRACTION)
+            local energy = math.floor((eco.BuildCostEnergy or 0) * BLACK_MARKET_ENERGY_FRACTION)
+            if mass > 0 then
+                brain:GiveResource('MASS', mass)
+            end
+            if energy > 0 then
+                brain:GiveResource('ENERGY', energy)
+            end
+        end
     end
-    local eco = victim:GetBlueprint().Economy or {}
-    local mass = math.floor((eco.BuildCostMass or 0) * BLACK_MARKET_MASS_FRACTION)
-    local energy = math.floor((eco.BuildCostEnergy or 0) * BLACK_MARKET_ENERGY_FRACTION)
-    if mass > 0 then
-        brain:GiveResource('MASS', mass)
-    end
-    if energy > 0 then
-        brain:GiveResource('ENERGY', energy)
+
+    if SalvageExplosionArmies[killer.Army] and Random(1, 100) <= SALVAGE_EXPLOSION_CHANCE then
+        local pos = victim:GetPosition()
+        if pos then
+            -- damageFriendly=false: the killer's own side takes no damage
+            DamageArea(killer, pos, SALVAGE_EXPLOSION_RADIUS, SALVAGE_EXPLOSION_DAMAGE,
+                'Normal', false)
+            LOG("FAF_BUFF_DRAFT: salvage_explosion_1 explosion triggered at victim "
+                .. UnitLabel(victim) .. " (r=" .. tostring(SALVAGE_EXPLOSION_RADIUS)
+                .. " dmg=" .. tostring(SALVAGE_EXPLOSION_DAMAGE) .. ")")
+        end
     end
 end
 
