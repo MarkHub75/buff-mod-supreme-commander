@@ -48,6 +48,7 @@
 - **Щит** — отдельная сущность `unit.MyShield`, создаётся в базовом `Unit.OnStopBeingBuilt` (не в OnCreate!). У неё стандартный entity health API: `GetMaxHealth/SetMaxHealth/GetHealth/SetHealth(instigator, val)`. Хук, обёртывающий OnStopBeingBuilt и вызывающий оригинал первым, уже видит созданный щит.
 - **`brain:GetListOfUnits(cat, needToBeIdle, requireBuilt)` — третий параметр НЕ работает** (annotation в engine/Sim/CAiBrain.lua: "Appears to be not functional"). Недостроенных фильтровать вручную: `unit:GetFractionComplete() < 1`.
 - **`BuffEffects.RadarRadius` ДАЁТ радар юнитам без радара** (вызывает InitIntel+EnableIntel, если радар не включён) — ограничивать EntityCategory категорией RADAR, иначе бафф раздаст радары всем.
+- **Production-баффы (`EnergyProduction`/`MassProduction`) пишут в `unit.EnergyProdAdjMod` / `unit.MassProdAdjMod` и вызывают `unit:UpdateProductionValues()`**. Это тот же путь, что используют adjacency storage bonus и cheat income, поэтому кастомный eco-бафф нельзя просто вручную держать в этих полях: следующий adjacency recalculation его перетрёт. Безопасный паттерн — отдельные BuffType для energy/mass production, плюс `UpdateProductionValues()` после late post-build кода, если hook сработал до класса структуры.
 - Regen-аффект: Mult считается от MaxHealth и обязан быть < 1 (иначе WARN и отмена) — для плоского бонуса использовать только Add.
 - MaxHealth-аффект по умолчанию поднимает и текущее HP на ту же дельту (флаг DoNotFill отключает).
 - Эффекты, для которых per-unit API НЕТ: reclaim bonus (yield лежит на пропах/команде реклейма).
@@ -68,7 +69,7 @@
 
 Источник: mod/BuffDraft/lua/buffs.lua (каталог/пул драфта), effects.lua (BuffSpecs + NotImplementedReasons).
 Сверка автоматическая: 35 id каталога = 30 BuffSpecs + 5 NotImplementedReasons, орфанов нет в обе стороны;
-все 25 BuffBlueprint зарегистрированы и используются. Пул драфта = весь каталог, т.е. not implemented
+все 28 BuffBlueprint зарегистрированы и используются. Пул драфта = весь каталог, т.е. not implemented
 баффы драфтятся и при пике только логируются (no-op) — это осознанно.
 
 Общее для всех parts-баффов: current units = да (свип на пике; 'built'-parts пропускают недостроенных,

@@ -191,16 +191,28 @@ BuffBlueprint {
 }
 
 BuffBlueprint {
-    Name = 'BuffDraftEcoOverclock1',
-    DisplayName = 'Eco Overclock I',
-    BuffType = 'BUFFDRAFTECO',
+    Name = 'BuffDraftEcoOverclockEnergy1',
+    DisplayName = 'Eco Overclock I (energy)',
+    BuffType = 'BUFFDRAFTECOENERGY',
     Stacks = 'IGNORE',
     Duration = -1,
     EntityCategory = 'STRUCTURE',
     -- same instance-level path adjacency bonuses use (unit.*ProdAdjMod)
     Affects = {
-        EnergyProduction = { Mult = ECO_PRODUCTION_MULT },
-        MassProduction = { Mult = ECO_PRODUCTION_MULT },
+        EnergyProduction = { Add = 0, Mult = ECO_PRODUCTION_MULT },
+    },
+}
+
+BuffBlueprint {
+    Name = 'BuffDraftEcoOverclockMass1',
+    DisplayName = 'Eco Overclock I (mass)',
+    BuffType = 'BUFFDRAFTECOMASS',
+    Stacks = 'IGNORE',
+    Duration = -1,
+    EntityCategory = 'STRUCTURE',
+    -- same instance-level path adjacency bonuses use (unit.*ProdAdjMod)
+    Affects = {
+        MassProduction = { Add = 0, Mult = ECO_PRODUCTION_MULT },
     },
 }
 
@@ -485,6 +497,19 @@ local function ShieldMaxHealthMult(mult)
         local newMax = math.floor(oldMax * mult)
         shield:SetMaxHealth(newMax)
         shield:SetHealth(shield, math.floor(newMax * ratio))
+    end
+end
+
+local function RefreshProductionValuesNextTick(unit)
+    local thread = ForkThread(function()
+        WaitTicks(1)
+        if (not unit) or unit.Dead then
+            return
+        end
+        unit:UpdateProductionValues()
+    end)
+    if unit.Trash then
+        unit.Trash:Add(thread)
     end
 end
 
@@ -948,11 +973,18 @@ local BuffSpecs = {
         name = 'BuffDraftAcuRegen1', kind = 'buff', buffType = 'BUFFDRAFTACUREGEN',
         category = categories.COMMAND, when = 'built',
     } } },
-    eco_overclock_1 = { method = "buff system Energy/MassProduction", parts = { {
-        name = 'BuffDraftEcoOverclock1', kind = 'buff', buffType = 'BUFFDRAFTECO',
-        category = categories.STRUCTURE * (categories.MASSPRODUCTION + categories.ENERGYPRODUCTION),
-        when = 'built',
-    } } },
+    eco_overclock_1 = { method = "buff system EnergyProduction/MassProduction", parts = {
+        {
+            name = 'BuffDraftEcoOverclockEnergy1', kind = 'buff', buffType = 'BUFFDRAFTECOENERGY',
+            category = categories.STRUCTURE * categories.ENERGYPRODUCTION,
+            when = 'built', refreshProduction = true,
+        },
+        {
+            name = 'BuffDraftEcoOverclockMass1', kind = 'buff', buffType = 'BUFFDRAFTECOMASS',
+            category = categories.STRUCTURE * categories.MASSPRODUCTION,
+            when = 'built', refreshProduction = true,
+        },
+    } },
     -- "Radar and vision": radar radius on units that already have radar, vision on
     -- scouts. Restricting to RADAR avoids BuffEffects.RadarRadius granting radar to
     -- units that never had it (it calls InitIntel for non-radar units).
@@ -1341,6 +1373,9 @@ local function ApplyPartToUnit(buffId, part, unit)
         unit.BuffDraftApplied = unit.BuffDraftApplied or {}
         unit.BuffDraftApplied[part.name] = true
         part.apply(unit)
+    end
+    if part.refreshProduction then
+        RefreshProductionValuesNextTick(unit)
     end
     LOG("FAF_BUFF_DRAFT: " .. buffId .. " applied to unit " .. UnitLabel(unit))
 end
