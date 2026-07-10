@@ -1,0 +1,513 @@
+WARNING: Error running OnAdjacentTo script in Entity ueb0301 at 8fa0ae08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
+         stack traceback:
+         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
+WARNING: Error running OnAdjacentTo script in Entity ueb0301 at 8fa0ae08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
+         stack traceback:
+         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
+WARNING: Error running OnNotAdjacentTo script in Entity ueb0201 at 2dc94c08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(824): table index is nil
+         stack traceback:
+         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(824): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:816>
+WARNING: Error running OnNotAdjacentTo script in Entity ueb0201 at 2dc94c08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(824): table index is nil
+         stack traceback:
+         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(824): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:816>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Error running OnAdjacentTo script in Entity ueb1301 at 87180508: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
+         stack traceback:
+         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
+WARNING: Error running OnAdjacentTo script in Entity ueb1301 at 87180508: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
+         stack traceback:
+         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
+WARNING: Error running OnAdjacentTo script in Entity ueb1301 at a817f908: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
+         stack traceback:
+         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
+WARNING: ACU kill detected. Time requirement for rating games will now be removed.
+WARNING: *AI WARNING: HaveUnitComparisonAtLocation - Invalid location - MAIN
+WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
+         stack traceback:
+         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
+         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1211): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1210>
+         	(tail call): ?
+         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
+         	(tail call): ?
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
+         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
+WARNING: Error running lua script: ...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): attempt to call method `GetLocationCoords' (a nil value)
+         stack traceback:
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:1518>
+WARNING: Error running OnDamage script in Entity  at 7c14ae00: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
+         stack traceback:
+         	[C]: ?
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
+         	[C]: ?
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
+WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
+         stack traceback:
+         	[C]: ?
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
+         	[C]: ?
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
+WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
+         stack traceback:
+         	[C]: ?
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
+         	[C]: ?
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
+WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
+         stack traceback:
+         	[C]: ?
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
+         	[C]: ?
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
+WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
+         stack traceback:
+         	[C]: ?
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
+         	[C]: ?
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
+WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
+         stack traceback:
+         	[C]: ?
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
+         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
+         	[C]: ?
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
+         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
+WARNING: ACU kill detected. Time requirement for rating games will now be removed.
+WARNING: *AI WARNING: FactoryComparisonAtLocation - Invalid location - Large Expansion Area 8
+WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
+         stack traceback:
+         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
+         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1211): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1210>
+         	(tail call): ?
+         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
+         	(tail call): ?
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
+         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
+WARNING: *AI WARNING: FactoryComparisonAtLocation - Invalid location - Expansion Area 9
+WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
+         stack traceback:
+         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
+         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1211): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1210>
+         	(tail call): ?
+         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
+         	(tail call): ?
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
+         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
+WARNING: *AI WARNING: EngineerComparisonAtLocation - Invalid location - MAIN
+WARNING: *AI WARNING: FactoryCapCheck - Invalid location - MAIN
+WARNING: *AI WARNING: HaveUnitComparisonAtLocation - Invalid location - MAIN
+WARNING: *AI WARNING: HaveUnitComparisonAtLocation - Invalid location - MAIN
+WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
+         stack traceback:
+         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
+         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1196): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1195>
+         	(tail call): ?
+         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
+         	(tail call): ?
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
+         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
+WARNING: Error running lua script: ...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): attempt to call method `GetLocationCoords' (a nil value)
+         stack traceback:
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:1518>
+WARNING: ACU kill detected. Time requirement for rating games will now be removed.
+WARNING: *AI WARNING: LocationBuildingComparison - Invalid location - MAIN
+WARNING: *AI WARNING: LocationEngineersBuildingComparison - Invalid location - MAIN
+WARNING: *AI WARNING: LocationEngineersBuildingComparison - Invalid location - MAIN
+WARNING: *AI WARNING: FactoryCapCheck - Invalid location - MAIN
+WARNING: *AI WARNING: LocationEngineersBuildingAssistanceComparison - Invalid location - MAIN
+WARNING: *AI WARNING: HaveUnitComparisonAtLocation - Invalid location - MAIN
+WARNING: *AI WARNING: FactoryCapCheck - Invalid location - MAIN
+WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
+         stack traceback:
+         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
+         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1196): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1195>
+         	(tail call): ?
+         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
+         	(tail call): ?
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
+         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
+         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
+         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
+WARNING: Error running lua script: ...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): attempt to call method `GetLocationCoords' (a nil value)
+         stack traceback:
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:1518>
+WARNING: Error running lua script: number expected but got nil
+         stack traceback:
+         	[C]: in function `VDist2Sq'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
+WARNING: Error running lua script: number expected but got nil
+         stack traceback:
+         	[C]: in function `VDist2Sq'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
+WARNING: Error running lua script: number expected but got nil
+         stack traceback:
+         	[C]: in function `VDist2Sq'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
+WARNING: Error running lua script: number expected but got nil
+         stack traceback:
+         	[C]: in function `VDist2Sq'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
+WARNING: Error running lua script: number expected but got nil
+         stack traceback:
+         	[C]: in function `VDist2Sq'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
+WARNING: Error running lua script: number expected but got nil
+         stack traceback:
+         	[C]: in function `VDist2Sq'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
+WARNING: Error running lua script: number expected but got nil
+         stack traceback:
+         	[C]: in function `VDist2Sq'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Error running lua script: Failed to attach entity xra0105 to /projectiles/sinker/sinker_proj.bp on bone 1
+         stack traceback:
+         	[C]: in function `AttachBoneTo'
+         	...projectiles.nx2\projectiles\sinker\sinker_script.lua(56): in function `StartSinking'
+         	...projectiles.nx2\projectiles\sinker\sinker_script.lua(35): in function <...projectiles.nx2\projectiles\sinker\sinker_script.lua:33>
+WARNING: defaultunits.lua OnImpact: did not find a deathWep on the plane! Is the weapon defined in the blueprint? xra0105
+WARNING: Error running OnImpact script in Entity xra0105 at 930fc308: ...faforever\gamedata\lua.nx2\lua\sim\units\airunit.lua(126): attempt to call method `Destroy' (a nil value)
+         stack traceback:
+         	...faforever\gamedata\lua.nx2\lua\sim\units\airunit.lua(126): in function <...faforever\gamedata\lua.nx2\lua\sim\units\airunit.lua:105>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: *AI DEBUG Alexandra (ИИx: технологический) Mass Hunter Mid Game Load and Transport 82623 Transport 4194596 ABORTING LOAD - watchcount 210.6003112793
+WARNING: Error running OnAdjacentTo script in Entity ueb1105 at a314ba08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
+         stack traceback:
+         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
+         	[C]: in function `CreateUnitHPR'
+         	...faforever\gamedata\lua.nx2\lua\defaultcomponents.lua(895): in function `OnStopBeingBuilt'
+         	...\gamedata\units.nx2\units\uel0401\uel0401_script.lua(83): in function <...\gamedata\units.nx2\units\uel0401\uel0401_script.lua:81>
+WARNING: Error running lua script: ...rever\gamedata\lua.nx2\lua\ai\transportutilities.lua(2106): attempt to concatenate field `BuilderName' (a nil value)
+         stack traceback:
+         	...rever\gamedata\lua.nx2\lua\ai\transportutilities.lua(2106): in function <...rever\gamedata\lua.nx2\lua\ai\transportutilities.lua:2054>
+WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
+         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
+         	[C]: ?
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         
+         stack traceback:
+         	[C]: in function `error'
+         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
+WARNING: Connection dialogue opening due to disconnection by players:

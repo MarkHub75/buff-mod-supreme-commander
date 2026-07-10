@@ -585,7 +585,7 @@ local function FindOrbitalInstigator(brain)
     }
     for _, cat in priority do
         for _, unit in brain:GetListOfUnits(cat, false, false) or {} do
-            if unit and (not unit.Dead) then
+            if unit and (not unit.Dead) and IsEntity(unit) then
                 return unit
             end
         end
@@ -728,6 +728,17 @@ end
 local function OrbitalDamageAreaThread(armyIndex, brain, pos, instigator)
     local watched = DebugWatchUnits(brain, pos)
     for tick = 1, ORBITAL_LANCE_TICKS do
+        -- ChangeUnitArmy and death replace/destroy unit entities. A strike keeps
+        -- running for ~2 seconds, so never pass a stale instigator to the engine
+        -- damage API (it raises "Expected a game object" in shield.lua).
+        if (not instigator) or instigator.Dead or (not IsEntity(instigator))
+                or instigator.Army ~= armyIndex then
+            instigator = FindOrbitalInstigator(brain)
+            if not instigator then
+                WARN("FAF_BUFF_DRAFT: orbital_lance_1 stopped: no live instigator")
+                return
+            end
+        end
         ForkThread(PlayOrbitalPointFx, armyIndex, pos)
         ApplyShieldAwareOrbitalDamage(instigator, brain, pos, ORBITAL_LANCE_TICK_DAMAGE, tick)
         WaitSeconds(ORBITAL_LANCE_TICK_INTERVAL)

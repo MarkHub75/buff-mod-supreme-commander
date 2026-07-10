@@ -19,6 +19,8 @@ local TOOLTIP_WIDTH = 300
 local panel = nil
 local pendingLabel = nil
 local chooseButton = nil
+local adminButton = nil
+local adminButtonVisible = false
 local rows = {} -- text controls of the current history rows
 local collapsed = false
 local pendingHeight = 0
@@ -45,6 +47,37 @@ local function ApplyPanelHeight()
         client:Show()
     end
     panel.Bottom:Set(math.floor(client.Top() + inner + LayoutHelpers.ScaleNumber(8)))
+end
+
+local function LocalPlayerIsAdminOwner()
+    if not BuffDraftConfig.DebugAdmin then
+        return false
+    end
+    local owner = BuffDraftConfig.AdminOwnerNickname
+    if not owner or owner == "" then
+        return true
+    end
+    return import('/mods/BuffDraft/lua/ui/admin.lua').LocalNickname() == owner
+end
+
+local function UpdateAdminButtonVisibility()
+    local wasVisible = adminButtonVisible
+    local baseHeight = LayoutHelpers.ScaleNumber(6) + pendingLabel:Height()
+        + LayoutHelpers.ScaleNumber(4) + chooseButton.Height()
+    adminButtonVisible = adminButton and LocalPlayerIsAdminOwner() or false
+
+    if adminButtonVisible then
+        adminButton:Show()
+        LayoutHelpers.Below(activeArea, adminButton, 6)
+        pendingHeight = baseHeight + LayoutHelpers.ScaleNumber(2) + adminButton.Height()
+    else
+        if adminButton then
+            adminButton:Hide()
+        end
+        LayoutHelpers.Below(activeArea, chooseButton, 6)
+        pendingHeight = baseHeight
+    end
+    return wasVisible ~= adminButtonVisible
 end
 
 local function CreatePanel()
@@ -92,18 +125,17 @@ local function CreatePanel()
     -- renders as an unclickable floating label). The sim validates the same
     -- DebugAdmin flag; this only saves typing the ui_lua console command.
     local activeAnchor = chooseButton
-    local adminHeight = 0
-    -- visible only for the configured admin owner; AccessAllowed also checks the
-    -- DebugAdmin flag (and the sim validates the same rules on every callback)
-    if import('/mods/BuffDraft/lua/ui/admin.lua').AccessAllowed() then
-        local adminButton = UIUtil.CreateButtonWithDropshadow(client, '/BUTTON/medium/', 'Admin')
+    -- Create in debug mode, but show only for the configured owner. Visibility is
+    -- refreshed later because GetArmiesTable may not be ready during panel setup.
+    if BuffDraftConfig.DebugAdmin then
+        adminButton = UIUtil.CreateButtonWithDropshadow(client, '/BUTTON/medium/', 'Admin')
         LayoutHelpers.Below(adminButton, chooseButton, 2)
         LayoutHelpers.AtLeftIn(adminButton, client, 8)
         adminButton.OnClick = function(self, modifiers)
             import('/mods/BuffDraft/lua/ui/admin.lua').Open()
         end
+        adminButton:Hide()
         activeAnchor = adminButton
-        adminHeight = LayoutHelpers.ScaleNumber(2) + adminButton.Height()
     end
 
     -- fixed anchor for the active-buff rows; zero height until a buff is owned.
@@ -111,17 +143,21 @@ local function CreatePanel()
     activeArea = import('/lua/maui/group.lua').Group(client, "buffDraftActiveArea")
     LayoutHelpers.Below(activeArea, activeAnchor, 6)
     LayoutHelpers.AtLeftIn(activeArea, client, 8)
-    activeArea.Right:Set(function() return client.Right() - LayoutHelpers.ScaleNumber(8) end)
+    -- Keep width explicit: active-row buttons anchor to activeArea.Right(), and
+    -- relying on opposite-edge lazy vars can recurse in Maui's Left/Right reset.
+    activeArea.Width:Set(function()
+        return math.max(0, client.Width() - LayoutHelpers.ScaleNumber(16))
+    end)
     activeArea.Height:Set(0)
 
-    pendingHeight = LayoutHelpers.ScaleNumber(6) + pendingLabel:Height()
-        + LayoutHelpers.ScaleNumber(4) + chooseButton.Height() + adminHeight
+    UpdateAdminButtonVisibility()
 end
 
 local function EnsurePanel()
     if not panel then
         CreatePanel()
     end
+    UpdateAdminButtonVisibility()
     panel:Show()
 end
 
@@ -305,6 +341,9 @@ function UpdateActive(event)
             table.insert(mine, state)
         end
     end
+    if panel and UpdateAdminButtonVisibility() then
+        ApplyPanelHeight()
+    end
     if table.getn(mine) == 0 then
         -- all active buffs gone (admin remove): clear the section
         if activeIdsKey ~= "" and panel then
@@ -330,6 +369,7 @@ function UpdateActive(event)
     end
     local key = table.concat(ids, "|")
     if key ~= activeIdsKey then
+        UpdateAdminButtonVisibility()
         BuildActiveRows(mine)
         activeIdsKey = key
         ApplyPanelHeight()

@@ -58,14 +58,32 @@ local function UnitLabel(unit, id)
     return string.format("%s#%s", tostring(unit:GetBlueprint().BlueprintId), id)
 end
 
+local function IsAvailablePoolUnit(unit, brain)
+    return not unit.Dead
+        and unit.Army == brain.Army
+        and unit:GetFractionComplete() == 1
+        and unit:IsIdleState()
+        and not unit:IsUnitState('Attached')
+        and unit.PlatoonHandle
+        and unit.PlatoonHandle.ArmyPool
+end
+
+local function ReleaseMission(brain, mission)
+    if mission.platoon and brain:PlatoonExists(mission.platoon) then
+        mission.platoon:PlatoonDisband()
+    end
+end
+
 -- Update one tracked mission; returns false when the mission ended and the
 -- experimental should go back to the idle pool.
 local function UpdateMission(brain, id, mission)
     local unit = mission.unit
-    if unit.Dead then
+    if unit.Dead or unit.Army ~= brain.Army then
+        ReleaseMission(brain, mission)
         return false
     end
     if unit:IsIdleState() then -- arrived and cleaned up, or orders were lost
+        ReleaseMission(brain, mission)
         return false
     end
 
@@ -96,6 +114,7 @@ local function UpdateMission(brain, id, mission)
                 brain.Army, UnitLabel(unit, id), mission.targetLabel))
             IssueClearCommands({ unit })
             ReleasedUntil[brain.Army][id] = GetGameTimeSeconds() + ReleaseCooldownSeconds
+            ReleaseMission(brain, mission)
             return false
         end
     end
@@ -125,9 +144,7 @@ function Tick(brain, markArmies)
     local units = brain:GetListOfUnits(ExperimentalCat, true)
     if units then
         for _, unit in units do
-            if not unit.Dead
-                    and unit:GetFractionComplete() == 1
-                    and not unit:IsUnitState('Attached') then
+            if IsAvailablePoolUnit(unit, brain) then
                 local id = tostring(unit:GetEntityId())
                 if not missions[id] then
                     table.insert(records, { unit = unit, mass = Targeting.UnitMass(unit), id = id })
@@ -159,7 +176,9 @@ function Tick(brain, markArmies)
                     army, label, target.label))
             else
                 local targetPos = Targeting.SurfacePoint(target.pos[1], target.pos[3])
-                IssueClearCommands({ unit }) -- the unit is idle, this only resets stale state
+                local platoon = brain:MakePlatoon('', '')
+                platoon.BuilderName = 'FAF_BUFF_DRAFT_EXPERIMENTAL'
+                brain:AssignUnitsToPlatoon(platoon, { unit }, 'Attack', 'GrowthFormation')
                 IssueAggressiveMove({ unit }, targetPos)
                 missions[record.id] = {
                     unit = unit,
@@ -168,6 +187,7 @@ function Tick(brain, markArmies)
                     lastDist = nil,
                     noProgressTicks = 0,
                     retargeted = false,
+                    platoon = platoon,
                 }
                 LOG(string.format("FAF_AI_DIRECTOR: experimental mission army=%d unit=%s target=%s",
                     army, label, target.label))

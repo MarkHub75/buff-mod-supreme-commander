@@ -163,6 +163,30 @@ local function FindBuildSpot(brain, bpId, point)
     return nil
 end
 
+-- A build order issued while the engineer stays in ArmyPool can race the stock
+-- platoon former. Hold it in a dedicated platoon until the task finishes, then
+-- return it through the normal PlatoonDisband path.
+local function ReleaseEngineerWhenIdle(brain, platoon, eng)
+    WaitSeconds(1)
+    while brain:PlatoonExists(platoon)
+            and not eng.Dead
+            and eng.Army == brain.Army
+            and not eng:IsIdleState() do
+        WaitSeconds(2)
+    end
+    if brain:PlatoonExists(platoon) then
+        platoon:PlatoonDisband()
+    end
+end
+
+local function IssueFortifyBuild(brain, eng, spot, bpId)
+    local platoon = brain:MakePlatoon('', '')
+    platoon.BuilderName = 'FAF_BUFF_DRAFT_FORTIFY'
+    brain:AssignUnitsToPlatoon(platoon, { eng }, 'Support', 'None')
+    IssueBuildMobile({ eng }, spot, bpId, {})
+    ForkThread(ReleaseEngineerWhenIdle, brain, platoon, eng)
+end
+
 -- One director tick for one AI army. Called under pcall from director.lua.
 -- Runs on its own cadence (StartSeconds/IntervalSeconds) inside the director's
 -- tick loop, so it needs no thread of its own.
@@ -186,8 +210,12 @@ function Tick(brain)
     local engineers = {}
     for _, eng in brain:GetListOfUnits(EngineerCat, true) or {} do
         if not eng.Dead
+                and eng.Army == brain.Army
                 and eng:GetFractionComplete() == 1
-                and not eng:IsUnitState('Attached') then
+                and eng:IsIdleState()
+                and not eng:IsUnitState('Attached')
+                and eng.PlatoonHandle
+                and eng.PlatoonHandle.ArmyPool then
             table.insert(engineers, {
                 unit = eng,
                 tech = EngineerTech(eng),
@@ -245,7 +273,7 @@ function Tick(brain)
                                 tostring(bpId), tostring(buildingType), spot[1], spot[3], point.key, UnitLabel(eng)))
                             assigned = true -- keep the walk moving in dry-run too
                         else
-                            IssueBuildMobile({ eng }, spot, bpId, {})
+                            IssueFortifyBuild(brain, eng, spot, bpId)
                             state.areaCooldown[point.key] = now + AreaCooldownSeconds
                             issued = issued + 1
                             assigned = true

@@ -43,16 +43,27 @@ local WaveState = {}
 
 local UnitMass = Targeting.UnitMass
 
--- Deterministic gather: idle finished wave units, heaviest first, late-game T1
--- cap, hard cap at MaxWaveUnits. Returns sorted records { unit, mass, id }.
+-- Only take genuinely free units from the AI ArmyPool. IsIdleState alone is not
+-- enough: a unit in a running FAF platoon can be momentarily idle between plan
+-- steps, and issuing a direct order then corrupts the stock platoon's lifecycle.
+local function IsAvailablePoolUnit(unit, brain)
+    return not unit.Dead
+        and unit.Army == brain.Army
+        and unit:GetFractionComplete() == 1
+        and unit:IsIdleState()
+        and not unit:IsUnitState('Attached')
+        and unit.PlatoonHandle
+        and unit.PlatoonHandle.ArmyPool
+end
+
+-- Deterministic gather: idle finished ArmyPool wave units, heaviest first,
+-- late-game T1 cap, hard cap at MaxWaveUnits. Returns sorted records.
 local function GatherCandidates(brain, state)
     local records = {}
     local units = brain:GetListOfUnits(WaveCat, true)
     if units then
         for _, unit in units do
-            if not unit.Dead
-                    and unit:GetFractionComplete() == 1
-                    and not unit:IsUnitState('Attached') then
+            if IsAvailablePoolUnit(unit, brain) then
                 local id = tostring(unit:GetEntityId())
                 if not (state.active and state.active.unitsById[id]) then
                     table.insert(records, { unit = unit, mass = UnitMass(unit), id = id })
@@ -94,6 +105,13 @@ local function GatherCandidates(brain, state)
     return records
 end
 
+local function ReleaseWave(brain, state, wave)
+    if wave.platoon and brain:PlatoonExists(wave.platoon) then
+        wave.platoon:PlatoonDisband()
+    end
+    state.active = nil
+end
+
 -- Stuck safety for the one active wave of an army: released when everyone is
 -- dead or idle again; if the closest unit stops closing on the target for
 -- StuckTicks director ticks, retarget once (re-path the survivors to the same
@@ -103,7 +121,7 @@ local function CheckActiveWave(brain, state)
     local wave = state.active
     local alive, allIdle = {}, true
     for _, unit in wave.unitsById do
-        if not unit.Dead then
+        if not unit.Dead and unit.Army == brain.Army then
             table.insert(alive, unit)
             if not unit:IsIdleState() then
                 allIdle = false
@@ -111,7 +129,7 @@ local function CheckActiveWave(brain, state)
         end
     end
     if table.getn(alive) == 0 or allIdle then
-        state.active = nil
+        ReleaseWave(brain, state, wave)
         return
     end
 
@@ -146,8 +164,7 @@ local function CheckActiveWave(brain, state)
         else
             LOG(string.format("FAF_AI_DIRECTOR: wave stuck army=%d wave=%d action=release target=%s",
                 brain.Army, wave.id, wave.targetLabel))
-            IssueClearCommands(alive)
-            state.active = nil
+            ReleaseWave(brain, state, wave)
             -- without this the released units are re-gathered next tick and sent
             -- to the same deterministic target again (endless stuck/order loop)
             state.cooldownUntil = GetGameTimeSeconds() + WaveCooldownSeconds
@@ -210,7 +227,12 @@ function Tick(brain, markArmies)
         table.insert(waveUnits, record.unit)
         unitsById[record.id] = record.unit
     end
-    IssueClearCommands(waveUnits) -- selected units are idle, this only resets stale state
+    -- Move units out of ArmyPool before ordering them. This is the stock FAF
+    -- pattern (tech-ai ExpansionHelpThread) and prevents another AI builder from
+    -- assigning the same units while the director owns the wave.
+    local platoon = brain:MakePlatoon('', '')
+    platoon.BuilderName = 'FAF_BUFF_DRAFT_LAND_WAVE'
+    brain:AssignUnitsToPlatoon(platoon, waveUnits, 'Attack', 'GrowthFormation')
     IssueAggressiveMove(waveUnits, targetPos)
     state.cooldownUntil = GetGameTimeSeconds() + WaveCooldownSeconds
     state.waveCount = state.waveCount + 1
@@ -222,6 +244,7 @@ function Tick(brain, markArmies)
         lastBestDist = nil,
         noProgressTicks = 0,
         retargeted = false,
+        platoon = platoon,
     }
     LOG(string.format("FAF_AI_DIRECTOR: issued land wave army=%d wave=%d units=%d target=%s",
         army, state.waveCount, count, target.label))
