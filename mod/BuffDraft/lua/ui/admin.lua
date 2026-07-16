@@ -57,6 +57,8 @@ local function Refresh()
             row.text:SetColor('FFFFD700') -- selected: gold
         elseif picked[row.id] then
             row.text:SetColor('FF80FF80') -- picked by selected side: green
+        elseif row.rarity == 'mythic' then
+            row.text:SetColor('FFFF4FD8') -- unique mythic tier color
         else
             row.text:SetColor('FFC0C8D0')
         end
@@ -146,6 +148,7 @@ local function CreatePanel()
             title = tostring(buff.title) .. " (" .. buffId .. ")",
             status = ((BuffStatus and BuffStatus[buffId]) or "implemented")
                 .. ", " .. (buff.rarity or "common"),
+            rarity = buff.rarity or "common",
         })
         total = total + text:Height() + LayoutHelpers.ScaleNumber(3)
         rowPrev = text
@@ -179,8 +182,8 @@ local function CreatePanel()
         panel:Hide()
     end
 
-    -- AI control: take allied AI land units at a clicked point (lua/ai_control/).
-    -- Input only; the sim validates the owner and every unit on its own config.
+    -- AI control: take the allied AI unit/structure clicked next (lua/ai_control/).
+    -- Input only; the sim validates the owner and target entity on its own config.
     if BuffDraftConfig.EnableAIControl then
         local takeButton = UIUtil.CreateButtonWithDropshadow(client, '/BUTTON/medium/', 'Take AI')
         LayoutHelpers.RightOf(takeButton, closeButton, 2)

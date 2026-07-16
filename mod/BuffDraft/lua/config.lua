@@ -14,15 +14,16 @@ DebugAdmin = true
 AdminOwnerNickname = "Mnogoruchka"
 
 -- AI unit transfer tool (lua/ai_control/): "Take AI" button in the admin panel
--- for the AdminOwnerNickname player - click a map point, allied AI land units
--- around it transfer to the player (stock SimUtils.TransferUnitsOwnership).
+-- for the AdminOwnerNickname player - click any allied AI unit/structure (land,
+-- naval, air, or building), and that exact entity transfers to the player
+-- (stock SimUtils.TransferUnitsOwnership).
 -- The sim re-validates everything; deleting lua/ai_control/ + false here
 -- removes the tool (the callback and the button bail out).
 EnableAIControl = true
-AIControlTakeRadius = 30 -- world units around the clicked point
-AIControlMaxUnitsPerTake = 60 -- cap per click (ownership transfer is expensive)
+AIControlTakeRadius = 30 -- legacy point-mode knob; exact-target mode does not read it
+AIControlMaxUnitsPerTake = 60 -- legacy point-mode knob; exact-target mode transfers one entity
 AIControlAllowACU = false -- never transfer AI ACUs unless explicitly enabled
-AIControlIncludeExperimentals = true -- mobile experimentals (any layer) can be taken too
+AIControlIncludeExperimentals = true -- land/naval/air experimentals can be taken too
 
 --#region balance knobs
 -- Every consumer reads these with a fallback to the same default, so a deleted
@@ -77,6 +78,9 @@ LegendaryUnlockPickNumber = 6 -- legendary options possible starting with this c
 LegendaryOfferCooldownChoices = 3 -- resolved choices without legendary after one was offered
 RareChancePercent = 35 -- per-slot chance once unlocked
 LegendaryChancePercent = 20 -- per-slot chance once unlocked (max 1 legendary per choice)
+MythicUnlockPickNumber = 10 -- mythic options are late-game, after both lower tiers
+MythicOfferCooldownChoices = 10 -- resolved choices without mythic after one was offered
+MythicChancePercent = 5 -- per-slot chance once unlocked (max 1 mythic per choice)
 
 -- passive multipliers
 ENGINEER_BUILD_RATE_MULT = 5.0
@@ -123,6 +127,15 @@ DREADNOUGHT_HP_MULT = 3.0
 DREADNOUGHT_RANGE_MULT = 1.5
 OMNISCIENCE_OMNI_MULT = 3.0
 OMNISCIENCE_RADAR_MULT = 2.5
+
+-- mythic buffs
+PARAGON_MIN_MASS_PER_SECOND = 20
+PARAGON_MIN_ENERGY_PER_SECOND = 1000
+PARAGON_MAX_MASS_PER_SECOND = 10000
+PARAGON_MAX_ENERGY_PER_SECOND = 1000000
+NUCLEAR_DAMAGE_MULT = 6.0
+NUCLEAR_RADIUS_MULT = 3.0
+NUCLEAR_BUILD_RATE_MULT = 1.5
 
 -- free unit spawns
 DRONE_FOUNDRY_INTERVAL = 45 -- game seconds between waves

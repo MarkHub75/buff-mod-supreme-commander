@@ -27,13 +27,34 @@ do
             BuffDraftCall("OnCreate", function()
                 import('/mods/BuffDraft/lua/effects.lua').OnUnitCreated(self)
             end)
+            BuffDraftCall("StrategicWarning.OnCreate", function()
+                import('/mods/BuffDraft/lua/strategic_warning.lua').OnUnitCreated(self)
+            end)
             return result
         end,
 
         OnStopBeingBuilt = function(self, builder, layer)
             local result = oldUnit.OnStopBeingBuilt(self, builder, layer)
-            BuffDraftCall("OnStopBeingBuilt", function()
-                import('/mods/BuffDraft/lua/effects.lua').OnUnitBuilt(self)
+            if result then
+                BuffDraftCall("OnStopBeingBuilt", function()
+                    import('/mods/BuffDraft/lua/effects.lua').OnUnitBuilt(self)
+                end)
+            end
+            return result
+        end,
+
+        CreateShield = function(self, bpShield)
+            local result = oldUnit.CreateShield(self, bpShield)
+            BuffDraftCall("CreateShield", function()
+                import('/mods/BuffDraft/lua/effects.lua').OnUnitShieldCreated(self)
+            end)
+            return result
+        end,
+
+        OnShieldEnabled = function(self)
+            local result = oldUnit.OnShieldEnabled(self)
+            BuffDraftCall("OnShieldEnabled", function()
+                import('/mods/BuffDraft/lua/effects.lua').OnUnitShieldCreated(self)
             end)
             return result
         end,

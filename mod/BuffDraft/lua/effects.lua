@@ -92,6 +92,17 @@ local DREADNOUGHT_HP_MULT = Knob('DREADNOUGHT_HP_MULT', 3.0)
 local DREADNOUGHT_RANGE_MULT = Knob('DREADNOUGHT_RANGE_MULT', 1.5)
 local OMNISCIENCE_OMNI_MULT = Knob('OMNISCIENCE_OMNI_MULT', 3.0)
 local OMNISCIENCE_RADAR_MULT = Knob('OMNISCIENCE_RADAR_MULT', 2.5)
+local PARAGON_MIN_MASS_PER_SECOND = Knob('PARAGON_MIN_MASS_PER_SECOND', 20)
+local PARAGON_MIN_ENERGY_PER_SECOND = Knob('PARAGON_MIN_ENERGY_PER_SECOND', 1000)
+local PARAGON_MAX_MASS_PER_SECOND = Knob('PARAGON_MAX_MASS_PER_SECOND', 10000)
+local PARAGON_MAX_ENERGY_PER_SECOND = Knob('PARAGON_MAX_ENERGY_PER_SECOND', 1000000)
+local NUCLEAR_DAMAGE_MULT = Knob('NUCLEAR_DAMAGE_MULT', 6.0)
+local NUCLEAR_RADIUS_MULT = Knob('NUCLEAR_RADIUS_MULT', 3.0)
+local NUCLEAR_BUILD_RATE_MULT = Knob('NUCLEAR_BUILD_RATE_MULT', 1.5)
+
+local CommanderUpgradeModule = import('/mods/BuffDraft/lua/commander_upgrades.lua')
+local CommanderUpgradePackages = CommanderUpgradeModule.CommanderUpgradePackages
+local FindCommanderUpgradePackage = CommanderUpgradeModule.FindCommanderUpgradePackage
 
 LOG("FAF_BUFF_DRAFT: orbital_lance config cooldown=" .. tostring(ORBITAL_LANCE_COOLDOWN)
     .. " ticks=" .. tostring(ORBITAL_LANCE_TICKS)
@@ -397,6 +408,53 @@ BuffBlueprint {
     Affects = { RadarRadius = { Add = 0, Mult = OMNISCIENCE_RADAR_MULT } },
 }
 
+BuffBlueprint {
+    Name = 'BuffDraftNuclearBuildRate1',
+    DisplayName = 'Nuclear Apocalypse (missile construction)',
+    BuffType = 'BUFFDRAFTNUCLEARBUILDRATE',
+    Stacks = 'IGNORE',
+    Duration = -1,
+    EntityCategory = 'NUKE',
+    Affects = { BuildRate = { Add = 0, Mult = NUCLEAR_BUILD_RATE_MULT } },
+}
+
+-- Each faction package is its own BuffType, so all four commander packages stack
+-- even though stock enhancement slots would normally replace one another.
+for _, package in CommanderUpgradePackages do
+    local affects = {
+        MaxHealth = { Add = 0, Mult = package.healthMult or 1 },
+        Regen = { Add = package.regenAdd or 0, Mult = 1 },
+        BuildRate = { Add = 0, Mult = package.buildRateMult or 1 },
+        VisionRadius = { Add = 0, Mult = package.visionMult or 1 },
+        MassProduction = { Add = package.massProductionAdd or 0, Mult = 1 },
+        EnergyProduction = { Add = package.energyProductionAdd or 0, Mult = 1 },
+    }
+    -- BuffEffects.OmniRadius initializes intel even for a neutral x1 affect, so
+    -- omit it entirely from packages that are not supposed to grant omni.
+    if package.omniMult and package.omniMult ~= 1 then
+        affects.OmniRadius = { Add = 0, Mult = package.omniMult }
+    end
+    BuffBlueprint {
+        Name = package.buffName,
+        DisplayName = package.title,
+        BuffType = package.buffType,
+        Stacks = 'IGNORE',
+        Duration = -1,
+        EntityCategory = 'COMMAND',
+        Affects = affects,
+    }
+end
+
+BuffBlueprint {
+    Name = 'BuffDraftCommanderSeraphimAura',
+    DisplayName = 'Seraphim Apotheosis Regeneration Aura',
+    BuffType = 'BUFFDRAFTCOMMANDERAURA',
+    Stacks = 'REPLACE',
+    Duration = 2,
+    EntityCategory = 'ALLUNITS',
+    Affects = { Regen = { Add = 25, Mult = 1 } },
+}
+
 --#endregion
 
 --#region custom apply helpers (per-instance engine APIs)
@@ -408,13 +466,16 @@ end
 -- Loop the unit's weapons, optionally filtered by blueprint RangeCategory
 -- ('UWRC_AntiAir', 'UWRC_DirectFire', 'UWRC_IndirectFire', ...).
 local function ForEachWeapon(unit, rangeCategory, fn)
+    local count = 0
     for i = 1, unit:GetWeaponCount() do
         local wep = unit:GetWeapon(i)
         local bp = wep:GetBlueprint()
         if (not rangeCategory) or bp.RangeCategory == rangeCategory then
+            count = count + 1
             fn(wep, bp, i)
         end
     end
+    return count
 end
 
 -- Several different buffs may scale the same weapon stat (e.g. tactical_range_1 and
@@ -433,25 +494,28 @@ end
 -- the stock BuffEffects use. Blueprint RateOfFire is shots per second.
 local function WeaponDamageMult(rangeCategory, mult)
     return function(unit)
-        ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
+        local count = ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
             wep:ChangeDamage((bp.Damage or 0) * CombinedWeaponMult(unit, 'dmg', i, mult))
         end)
+        return count > 0
     end
 end
 
 local function WeaponRateOfFireMult(rangeCategory, mult)
     return function(unit)
-        ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
+        local count = ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
             wep:ChangeRateOfFire((bp.RateOfFire or 1) * CombinedWeaponMult(unit, 'rof', i, mult))
         end)
+        return count > 0
     end
 end
 
 local function WeaponRangeMult(rangeCategory, mult)
     return function(unit)
-        ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
+        local count = ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
             wep:ChangeMaxRadius((bp.MaxRadius or 0) * CombinedWeaponMult(unit, 'rng', i, mult))
         end)
+        return count > 0
     end
 end
 
@@ -460,9 +524,10 @@ end
 -- it to one application per unit per buff).
 local function WeaponDamageRadiusAdd(rangeCategory, add)
     return function(unit)
-        ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
+        local count = ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
             wep:AddDamageRadiusMod(add)
         end)
+        return count > 0
     end
 end
 
@@ -473,12 +538,15 @@ end
 -- apply (CollisionBeam:DoDamage uses DamageData.DamageRadius via DamageArea).
 local function BeamWeaponBoost(damageMult, radiusAdd)
     return function(unit)
+        local count = 0
         ForEachWeapon(unit, nil, function(wep, bp, i)
             if bp.BeamLifetime ~= nil then
+                count = count + 1
                 wep:ChangeDamage((bp.Damage or 0) * CombinedWeaponMult(unit, 'dmg', i, damageMult))
                 wep:AddDamageRadiusMod(radiusAdd)
             end
         end)
+        return count > 0
     end
 end
 
@@ -488,15 +556,23 @@ end
 local function ShieldMaxHealthMult(mult)
     return function(unit)
         local shield = unit.MyShield
-        if not shield then
-            LOG("FAF_BUFF_DRAFT: no shield instance on " .. UnitLabel(unit) .. ", nothing to buff")
-            return
+        if (not shield) or (not IsEntity(shield)) then
+            return false
         end
         local oldMax = shield:GetMaxHealth()
+        if (not oldMax) or oldMax <= 0 then
+            return false
+        end
         local ratio = shield:GetHealth() / oldMax
-        local newMax = math.floor(oldMax * mult)
+        local newMax = math.max(1, math.floor(oldMax * mult))
         shield:SetMaxHealth(newMax)
         shield:SetHealth(shield, math.floor(newMax * ratio))
+        if shield.UpdateShieldRatio then
+            shield:UpdateShieldRatio(shield:GetHealth() / shield:GetMaxHealth())
+        end
+        LOG("FAF_BUFF_DRAFT: shield max changed on " .. UnitLabel(unit)
+            .. " old=" .. tostring(oldMax) .. " new=" .. tostring(newMax))
+        return true
     end
 end
 
@@ -521,6 +597,11 @@ end
 -- the OnKilledUnit hook
 local BlackMarketArmies = {}
 local SalvageExplosionArmies = {}
+local NuclearApocalypseArmies = {}
+local ParagonGeneration = {}
+local CommanderBuffArmies = {}
+local CommanderUpgradeState = {}
+local CommanderAuraGeneration = {}
 
 -- "<buffId>:<armyIndex>" -> generation counter. A spawn thread only keeps running
 -- while its own generation is the current one; both the admin remove AND a
@@ -576,6 +657,282 @@ local function FactorySpawnThread(buffId, armyIndex, bpByFaction, interval, maxP
         end
     end
     LOG("FAF_BUFF_DRAFT: " .. buffId .. " spawn thread stopped army=" .. tostring(armyIndex))
+end
+
+-- Public read-only API used by the minimal Weapon hook. The hook modifies only
+-- NukeAOE objects created by a launcher whose army owns this mythic buff.
+function GetNuclearStrikeMultipliers(armyIndex)
+    if NuclearApocalypseArmies[armyIndex] then
+        return NUCLEAR_DAMAGE_MULT, NUCLEAR_RADIUS_MULT
+    end
+    return 1, 1
+end
+
+-- Exact XAB1401 production formula, paid straight to the army once per sim tick
+-- because this buff intentionally has no producer entity. GiveResource is
+-- deterministic and caps at storage just like ordinary production.
+local function ParagonIncomeThread(armyIndex, generation)
+    LOG("FAF_BUFF_DRAFT: paragon_singularity_1 income started army=" .. tostring(armyIndex))
+    while ArmyBrains[armyIndex] and ParagonGeneration[armyIndex] == generation do
+        local brain = ArmyBrains[armyIndex]
+        local massNeed = brain:GetEconomyRequested('MASS') * 10
+        local energyNeed = brain:GetEconomyRequested('ENERGY') * 10
+        local massIncome = brain:GetEconomyIncome('MASS') * 10
+        local energyIncome = brain:GetEconomyIncome('ENERGY') * 10
+
+        local massAdd = PARAGON_MIN_MASS_PER_SECOND
+            + math.max(0, massNeed - massIncome)
+        local energyAdd = PARAGON_MIN_ENERGY_PER_SECOND
+            + math.max(0, energyNeed - energyIncome)
+        massAdd = math.min(PARAGON_MAX_MASS_PER_SECOND, massAdd)
+        energyAdd = math.min(PARAGON_MAX_ENERGY_PER_SECOND, energyAdd)
+
+        brain:GiveResource('MASS', massAdd / 10)
+        brain:GiveResource('ENERGY', energyAdd / 10)
+        WaitTicks(1)
+    end
+    LOG("FAF_BUFF_DRAFT: paragon_singularity_1 income stopped army=" .. tostring(armyIndex))
+end
+
+local function StartParagonIncome(armyIndex)
+    ParagonGeneration[armyIndex] = (ParagonGeneration[armyIndex] or 0) + 1
+    ForkThread(ParagonIncomeThread, armyIndex, ParagonGeneration[armyIndex])
+end
+
+local function StopParagonIncome(armyIndex)
+    ParagonGeneration[armyIndex] = (ParagonGeneration[armyIndex] or 0) + 1
+end
+
+local function FindArmyCommander(armyIndex)
+    local brain = ArmyBrains[armyIndex]
+    if not brain then
+        return nil
+    end
+    for _, unit in brain:GetListOfUnits(categories.COMMAND, false, false) or {} do
+        if unit and (not unit.Dead) and unit:GetFractionComplete() >= 1 then
+            return unit
+        end
+    end
+    return nil
+end
+
+local function CommanderPackageCost(package)
+    local source = GetUnitBlueprintByName(package.sourceUnit)
+    local enhancements = source and source.Enhancements or {}
+    local mass = 0
+    local energy = 0
+    local buildTime = 0
+    for _, enhancementId in package.enhancements do
+        local bp = enhancements[enhancementId]
+        if bp then
+            mass = mass + (bp.BuildCostMass or 0)
+            energy = energy + (bp.BuildCostEnergy or 0)
+            buildTime = buildTime + (bp.BuildTime or 0)
+        else
+            WARN("FAF_BUFF_DRAFT: commander package " .. tostring(package.id)
+                .. " missing source enhancement " .. tostring(enhancementId))
+        end
+    end
+    return mass, energy, buildTime
+end
+
+local function CommanderState(armyIndex)
+    CommanderUpgradeState[armyIndex] = CommanderUpgradeState[armyIndex]
+        or { installed = {}, building = nil }
+    return CommanderUpgradeState[armyIndex]
+end
+
+local function SyncCommanderUpgradeState(armyIndex)
+    local state = CommanderState(armyIndex)
+    local commander = FindArmyCommander(armyIndex)
+    local buildRate = commander and math.max(1, commander:GetBuildRate()) or 1
+    local packages = {}
+    for _, package in CommanderUpgradePackages do
+        local mass, energy, buildTime = CommanderPackageCost(package)
+        table.insert(packages, {
+            id = package.id,
+            title = package.title,
+            description = package.description,
+            mass = mass,
+            energy = energy,
+            buildTime = buildTime,
+            seconds = math.ceil(buildTime / buildRate),
+            installed = state.installed[package.id] and true or false,
+            building = state.building and state.building.packageId == package.id or false,
+        })
+    end
+    Sync.BuffDraft = Sync.BuffDraft or {}
+    table.insert(Sync.BuffDraft, {
+        event = 'commander_upgrades',
+        army = armyIndex,
+        owned = CommanderBuffArmies[armyIndex] and true or false,
+        commanderAlive = commander and true or false,
+        packages = packages,
+        busy = state.building and true or false,
+    })
+end
+
+local function UnitHasNamedBuff(unit, buffType, buffName)
+    return unit.Buffs and unit.Buffs.BuffTable
+        and unit.Buffs.BuffTable[buffType]
+        and unit.Buffs.BuffTable[buffType][buffName] and true or false
+end
+
+local function ApplyCommanderPackageWeapons(unit, package, inverse)
+    local damage = inverse and (1 / (package.damageMult or 1)) or (package.damageMult or 1)
+    local rate = inverse and (1 / (package.rateOfFireMult or 1)) or (package.rateOfFireMult or 1)
+    local range = inverse and (1 / (package.rangeMult or 1)) or (package.rangeMult or 1)
+    local changed = 0
+    ForEachWeapon(unit, nil, function(weapon, bp, index)
+        if (not bp.DummyWeapon) and bp.Label ~= 'DeathWeapon' and (bp.Damage or 0) > 0 then
+            weapon:ChangeDamage((bp.Damage or 0)
+                * CombinedWeaponMult(unit, 'dmg', index, damage))
+            weapon:ChangeRateOfFire((bp.RateOfFire or 1)
+                * CombinedWeaponMult(unit, 'rof', index, rate))
+            weapon:ChangeMaxRadius((bp.MaxRadius or 0)
+                * CombinedWeaponMult(unit, 'rng', index, range))
+            changed = changed + 1
+        end
+    end)
+    return changed
+end
+
+local function CommanderAuraThread(unit, generation, radius)
+    while unit and (not unit.Dead) and CommanderAuraGeneration[unit.EntityId] == generation do
+        local brain = unit:GetAIBrain()
+        for _, ally in brain:GetUnitsAroundPoint(
+            categories.ALLUNITS, unit:GetPosition(), radius, 'Ally') or {} do
+            if ally and (not ally.Dead) then
+                Buff.ApplyBuff(ally, 'BuffDraftCommanderSeraphimAura')
+            end
+        end
+        WaitSeconds(1)
+    end
+end
+
+local function ApplyCommanderPackage(armyIndex, unit, package)
+    Buff.ApplyBuff(unit, package.buffName)
+    ApplyCommanderPackageWeapons(unit, package, false)
+    if package.teleport then
+        unit:AddCommandCap('RULEUCC_Teleport')
+    end
+    if package.cloak then
+        unit:EnableUnitIntel('BuffDraft', 'RadarStealth')
+        unit:EnableUnitIntel('BuffDraft', 'SonarStealth')
+        unit:EnableUnitIntel('BuffDraft', 'Cloak')
+    end
+    if package.auraRegen then
+        CommanderAuraGeneration[unit.EntityId] = (CommanderAuraGeneration[unit.EntityId] or 0) + 1
+        ForkThread(CommanderAuraThread, unit, CommanderAuraGeneration[unit.EntityId],
+            package.auraRadius or 30)
+    end
+    RefreshProductionValuesNextTick(unit)
+    LOG("FAF_BUFF_DRAFT: commander package installed army=" .. tostring(armyIndex)
+        .. " package=" .. tostring(package.id) .. " unit=" .. UnitLabel(unit))
+end
+
+local function FinishCommanderUpgrade(armyIndex, unit, package, economyEvent)
+    WaitFor(economyEvent)
+    if unit and (not unit.Dead) then
+        RemoveEconomyEvent(unit, economyEvent)
+        unit:SetWorkProgress(0)
+    end
+    local state = CommanderState(armyIndex)
+    if (not state.building) or state.building.event ~= economyEvent then
+        return
+    end
+    state.building = nil
+    if CommanderBuffArmies[armyIndex] and unit and (not unit.Dead)
+            and unit.Army == armyIndex then
+        ApplyCommanderPackage(armyIndex, unit, package)
+        state.installed[package.id] = true
+    else
+        LOG("FAF_BUFF_DRAFT: commander package cancelled after commander/buff loss army="
+            .. tostring(armyIndex) .. " package=" .. tostring(package.id))
+    end
+    SyncCommanderUpgradeState(armyIndex)
+end
+
+--- SIM callback entry point. Army identity is supplied by GetCurrentCommandSourceArmy.
+function RequestCommanderUpgrade(armyIndex, packageId)
+    if not CommanderBuffArmies[armyIndex] then
+        LOG("FAF_BUFF_DRAFT: commander upgrade rejected army=" .. tostring(armyIndex)
+            .. " reason=buff not owned")
+        SyncCommanderUpgradeState(armyIndex)
+        return
+    end
+    local package = FindCommanderUpgradePackage(packageId)
+    if not package then
+        LOG("FAF_BUFF_DRAFT: commander upgrade rejected unknown package=" .. tostring(packageId))
+        return
+    end
+    local state = CommanderState(armyIndex)
+    if state.installed[packageId] or state.building then
+        LOG("FAF_BUFF_DRAFT: commander upgrade rejected army=" .. tostring(armyIndex)
+            .. " package=" .. tostring(packageId) .. " reason=installed or busy")
+        SyncCommanderUpgradeState(armyIndex)
+        return
+    end
+    local unit = FindArmyCommander(armyIndex)
+    if not unit then
+        LOG("FAF_BUFF_DRAFT: commander upgrade rejected army=" .. tostring(armyIndex)
+            .. " reason=no living commander")
+        SyncCommanderUpgradeState(armyIndex)
+        return
+    end
+    local mass, energy, buildTime = CommanderPackageCost(package)
+    local duration = buildTime / math.max(1, unit:GetBuildRate())
+    local economyEvent = CreateEconomyEvent(unit, energy, mass, duration, unit.SetWorkProgress)
+    state.building = {
+        packageId = packageId,
+        unitId = unit.EntityId,
+        event = economyEvent,
+    }
+    LOG("FAF_BUFF_DRAFT: commander upgrade started army=" .. tostring(armyIndex)
+        .. " package=" .. tostring(packageId) .. " mass=" .. tostring(mass)
+        .. " energy=" .. tostring(energy) .. " seconds=" .. tostring(duration))
+    SyncCommanderUpgradeState(armyIndex)
+    ForkThread(FinishCommanderUpgrade, armyIndex, unit, package, economyEvent)
+end
+
+function RequestCommanderUpgradeSync(armyIndex)
+    if CommanderBuffArmies[armyIndex] then
+        SyncCommanderUpgradeState(armyIndex)
+    end
+end
+
+local function RemoveCommanderPackages(armyIndex)
+    local state = CommanderState(armyIndex)
+    local unit = FindArmyCommander(armyIndex)
+    if state.building then
+        if unit and state.building.unitId == unit.EntityId then
+            RemoveEconomyEvent(unit, state.building.event)
+            unit:SetWorkProgress(0)
+        end
+        state.building = nil
+    end
+    if unit then
+        for _, package in CommanderUpgradePackages do
+            if state.installed[package.id] then
+                if UnitHasNamedBuff(unit, package.buffType, package.buffName) then
+                    Buff.RemoveBuff(unit, package.buffName, true)
+                end
+                ApplyCommanderPackageWeapons(unit, package, true)
+                if package.cloak then
+                    unit:DisableUnitIntel('BuffDraft', 'RadarStealth')
+                    unit:DisableUnitIntel('BuffDraft', 'SonarStealth')
+                    unit:DisableUnitIntel('BuffDraft', 'Cloak')
+                end
+            end
+        end
+        CommanderAuraGeneration[unit.EntityId] = (CommanderAuraGeneration[unit.EntityId] or 0) + 1
+        if (not unit.HasEnhancement) or (not unit:HasEnhancement('Teleporter')) then
+            unit:RemoveCommandCap('RULEUCC_Teleport')
+        end
+        RefreshProductionValuesNextTick(unit)
+    end
+    state.installed = {}
+    SyncCommanderUpgradeState(armyIndex)
 end
 
 local function FindOrbitalInstigator(brain)
@@ -834,6 +1191,15 @@ local ActiveBuffDefs = {
         cooldown = ORBITAL_LANCE_COOLDOWN,
         use = OrbitalLanceStrike,
     },
+    -- Registered in the active-row framework only to expose the Upgrades button.
+    -- history.lua opens the custom UI locally and never calls this no-op handler.
+    commander_apotheosis_1 = {
+        cooldown = 0,
+        use = function(armyIndex, payload)
+            SyncCommanderUpgradeState(armyIndex)
+            return false, "use the commander upgrade panel"
+        end,
+    },
 }
 
 -- armyIndex -> buffId -> { cooldownUntil = gameSeconds, lastUsed = gameSeconds|nil }
@@ -1043,12 +1409,14 @@ local BuffSpecs = {
         name = 'BuffDraftShieldHealth1', kind = 'custom',
         apply = ShieldMaxHealthMult(SHIELD_HEALTH_MULT),
         unapply = ShieldMaxHealthMult(1 / SHIELD_HEALTH_MULT),
+        requireShield = true, tracksShieldEntity = true,
         category = categories.STRUCTURE * categories.SHIELD, when = 'built',
     } } },
     mobile_shields_1 = { method = "shield entity SetMaxHealth", parts = { {
         name = 'BuffDraftMobileShields1', kind = 'custom',
         apply = ShieldMaxHealthMult(MOBILE_SHIELD_HEALTH_MULT),
         unapply = ShieldMaxHealthMult(1 / MOBILE_SHIELD_HEALTH_MULT),
+        requireShield = true, tracksShieldEntity = true,
         category = categories.MOBILE * categories.SHIELD, when = 'built',
     } } },
 
@@ -1103,7 +1471,8 @@ local BuffSpecs = {
             name = 'BuffDraftOverchargedShields1', kind = 'custom',
             apply = ShieldMaxHealthMult(OVERCHARGED_SHIELD_MULT),
             unapply = ShieldMaxHealthMult(1 / OVERCHARGED_SHIELD_MULT),
-            category = categories.SHIELD, when = 'built',
+            requireShield = true, tracksShieldEntity = true,
+            category = categories.ALLUNITS, when = 'built',
         } },
     },
     napalm_rounds_1 = {
@@ -1324,6 +1693,43 @@ local BuffSpecs = {
             },
         },
     },
+    paragon_singularity_1 = {
+        method = "stock XAB1401 adaptive production formula via per-tick brain:GiveResource",
+        armyApply = function(buffId, armyIndex)
+            StartParagonIncome(armyIndex)
+        end,
+        armyRemove = function(buffId, armyIndex)
+            StopParagonIncome(armyIndex)
+        end,
+    },
+    commander_apotheosis_1 = {
+        method = "custom SIM-validated four-package commander enhancement system",
+        armyApply = function(buffId, armyIndex)
+            CommanderBuffArmies[armyIndex] = true
+            CommanderState(armyIndex)
+            RegisterActiveBuff(armyIndex, buffId)
+            SyncCommanderUpgradeState(armyIndex)
+        end,
+        armyRemove = function(buffId, armyIndex)
+            CommanderBuffArmies[armyIndex] = nil
+            RemoveCommanderPackages(armyIndex)
+            UnregisterActiveBuff(armyIndex, buffId)
+        end,
+    },
+    nuclear_apocalypse_1 = {
+        method = "per-launcher BuildRate buff + per-projectile NukeAOE scaling in Weapon hook",
+        parts = { {
+            name = 'BuffDraftNuclearBuildRate1', kind = 'buff',
+            buffType = 'BUFFDRAFTNUCLEARBUILDRATE',
+            category = categories.NUKE, when = 'create',
+        } },
+        armyApply = function(buffId, armyIndex)
+            NuclearApocalypseArmies[armyIndex] = true
+        end,
+        armyRemove = function(buffId, armyIndex)
+            NuclearApocalypseArmies[armyIndex] = nil
+        end,
+    },
 }
 
 -- initialize per-part activation state
@@ -1370,25 +1776,50 @@ local function HasBuffApplied(unit, part)
     end
     -- custom parts: own marker table on the unit instance
     local applied = unit.BuffDraftApplied
+    if part.tracksShieldEntity then
+        local shield = unit.MyShield
+        return shield and applied and applied[part.name] == shield.EntityId and true or false
+    end
     return applied and applied[part.name] and true or false
+end
+
+local function PartMatchesUnit(part, unit)
+    if not EntityCategoryContains(part.category, unit) then
+        return false
+    end
+    if part.requireShield and not unit.MyShield then
+        return false
+    end
+    return true
 end
 
 local function ApplyPartToUnit(buffId, part, unit)
     if HasBuffApplied(unit, part) then
         LOG("FAF_BUFF_DRAFT: " .. buffId .. " skipped already applied " .. UnitLabel(unit))
-        return
+        return false
     end
     if part.kind == 'buff' then
         Buff.ApplyBuff(unit, part.name)
+        if not HasBuffApplied(unit, part) then
+            return false
+        end
     else
+        local applied = part.apply(unit)
+        if not applied then
+            return false
+        end
         unit.BuffDraftApplied = unit.BuffDraftApplied or {}
-        unit.BuffDraftApplied[part.name] = true
-        part.apply(unit)
+        if part.tracksShieldEntity and unit.MyShield then
+            unit.BuffDraftApplied[part.name] = unit.MyShield.EntityId
+        else
+            unit.BuffDraftApplied[part.name] = true
+        end
     end
     if part.refreshProduction then
         RefreshProductionValuesNextTick(unit)
     end
     LOG("FAF_BUFF_DRAFT: " .. buffId .. " applied to unit " .. UnitLabel(unit))
+    return true
 end
 
 local function ArmiesToString(armies)
@@ -1426,20 +1857,48 @@ function ApplyPickedBuff(sideName, armies, buffId)
         -- OnStopBeingBuilt hook picks those up on completion. futureOnly parts
         -- never sweep (only units built after the pick qualify).
         if not part.futureOnly then
+            local matched = 0
+            local applied = 0
+            local alreadyApplied = 0
+            local unfinished = 0
+            local failed = 0
             for _, armyIndex in armies do
                 local brain = ArmyBrains[armyIndex]
                 if brain then
                     for _, unit in brain:GetListOfUnits(part.category, false, false) or {} do
-                        if not unit.Dead then
+                        if (not unit.Dead) and PartMatchesUnit(part, unit) then
+                            matched = matched + 1
                             if part.when == 'built' and unit:GetFractionComplete() < 1 then
                                 -- caught later by OnUnitBuilt
+                                unfinished = unfinished + 1
+                            elseif HasBuffApplied(unit, part) then
+                                alreadyApplied = alreadyApplied + 1
                             else
-                                ApplyPartToUnit(buffId, part, unit)
+                                if ApplyPartToUnit(buffId, part, unit) then
+                                    applied = applied + 1
+                                else
+                                    failed = failed + 1
+                                end
                             end
                         end
                     end
                 end
             end
+            LOG("FAF_BUFF_DRAFT: apply audit buff=" .. buffId
+                .. " part=" .. part.name
+                .. " matched=" .. tostring(matched)
+                .. " applied=" .. tostring(applied)
+                .. " already=" .. tostring(alreadyApplied)
+                .. " unfinished=" .. tostring(unfinished)
+                .. " failed=" .. tostring(failed))
+            if buffId == 'acu_regen_1' then
+                LOG("FAF_BUFF_DRAFT: commander audit expectedRegenBonus="
+                    .. tostring(ACU_REGEN_ADD)
+                    .. " appliedCommanders=" .. tostring(applied + alreadyApplied))
+            end
+        else
+            LOG("FAF_BUFF_DRAFT: apply audit buff=" .. buffId
+                .. " part=" .. part.name .. " futureOnly=true")
         end
     end
 
@@ -1475,7 +1934,9 @@ local function RemovePartFromUnit(buffId, part, unit)
         if not part.unapply then
             return false
         end
-        part.unapply(unit)
+        if not part.unapply(unit) then
+            return false
+        end
         if unit.BuffDraftApplied then
             unit.BuffDraftApplied[part.name] = nil
         end
@@ -1512,7 +1973,7 @@ function RemovePickedBuff(sideName, armies, buffId)
                 local brain = ArmyBrains[armyIndex]
                 if brain then
                     for _, unit in brain:GetListOfUnits(part.category, false, false) or {} do
-                        if (not unit.Dead) and HasBuffApplied(unit, part) then
+                        if (not unit.Dead) and PartMatchesUnit(part, unit) and HasBuffApplied(unit, part) then
                             RemovePartFromUnit(buffId, part, unit)
                         end
                     end
@@ -1561,11 +2022,12 @@ function RemovePickedBuff(sideName, armies, buffId)
     return fully, table.concat(notes, "; ")
 end
 
-local function ApplyActivePartsToUnit(unit, when)
+local function ApplyActivePartsToUnit(unit, when, shieldOnly)
     for buffId, spec in BuffSpecs do
         for _, part in spec.parts or {} do
             if part.when == when and part.active[unit.Army]
-                and EntityCategoryContains(part.category, unit) then
+                and ((not shieldOnly) or part.requireShield)
+                and PartMatchesUnit(part, unit) then
                 ApplyPartToUnit(buffId, part, unit)
             end
         end
@@ -1581,6 +2043,16 @@ end
 --- implementation ran, so MyShield and final health already exist).
 function OnUnitBuilt(unit)
     ApplyActivePartsToUnit(unit, 'built')
+end
+
+--- Called after Unit.CreateShield and when a shield turns on. Shield entities can
+--- be recreated by upgrades/enhancements, so shield custom parts track the
+--- concrete MyShield entity id instead of only the owning unit.
+function OnUnitShieldCreated(unit)
+    if (not unit) or unit.Dead or (not unit.MyShield) then
+        return
+    end
+    ApplyActivePartsToUnit(unit, 'built', true)
 end
 
 --- Called from the Unit.OnStartBuild hook: applies conditional build-rate buffs

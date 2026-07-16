@@ -11,13 +11,20 @@ local BuffDraftConfig = import('/mods/BuffDraft/lua/config.lua')
 local OPTIONS_PER_TICK = BuffDraftConfig.OptionsPerTick or 3
 local RARE_UNLOCK_PICK = BuffDraftConfig.RareUnlockPickNumber or 6
 local LEGENDARY_UNLOCK_PICK = BuffDraftConfig.LegendaryUnlockPickNumber or 6
+local MYTHIC_UNLOCK_PICK = BuffDraftConfig.MythicUnlockPickNumber or 10
 local LEGENDARY_COOLDOWN_CHOICES = BuffDraftConfig.LegendaryOfferCooldownChoices or 3
+local MYTHIC_COOLDOWN_CHOICES = BuffDraftConfig.MythicOfferCooldownChoices or 10
 local RARE_CHANCE_PERCENT = BuffDraftConfig.RareChancePercent or 35
 local LEGENDARY_CHANCE_PERCENT = BuffDraftConfig.LegendaryChancePercent or 20
+local MYTHIC_CHANCE_PERCENT = BuffDraftConfig.MythicChancePercent or 5
 
--- sideName -> resolved choices left before legendary may be offered again;
--- set when a legendary option is offered, decremented on every resolved pick
+-- sideName -> resolved choices left before a top-tier offer may appear again;
+-- set when an option is offered, then decremented by later resolved choices.
 local LegendaryCooldownRemaining = {
+    Mark = 0,
+    Artem = 0,
+}
+local MythicCooldownRemaining = {
     Mark = 0,
     Artem = 0,
 }
@@ -102,6 +109,8 @@ local function SideRarityAllowance(sideName)
         rare = choiceNum >= RARE_UNLOCK_PICK,
         legendary = choiceNum >= LEGENDARY_UNLOCK_PICK
             and LegendaryCooldownRemaining[sideName] <= 0,
+        mythic = choiceNum >= MYTHIC_UNLOCK_PICK
+            and MythicCooldownRemaining[sideName] <= 0,
     }
     if choiceNum < LEGENDARY_UNLOCK_PICK then
         allow.legendaryReason = "locked until choice " .. tostring(LEGENDARY_UNLOCK_PICK)
@@ -110,30 +119,44 @@ local function SideRarityAllowance(sideName)
             .. tostring(LegendaryCooldownRemaining[sideName]) .. " choices left)"
     end
     allow.rareReason = "locked until choice " .. tostring(RARE_UNLOCK_PICK)
+    if choiceNum < MYTHIC_UNLOCK_PICK then
+        allow.mythicReason = "locked until choice " .. tostring(MYTHIC_UNLOCK_PICK)
+    elseif MythicCooldownRemaining[sideName] > 0 then
+        allow.mythicReason = "mythic cooldown ("
+            .. tostring(MythicCooldownRemaining[sideName]) .. " choices left)"
+    end
     LOG("FAF_BUFF_DRAFT: rarity unlock side=" .. sideName
         .. " picks=" .. tostring(table.getn(PickedHistory[sideName]))
         .. " choice#=" .. tostring(choiceNum)
-        .. " rare=" .. tostring(allow.rare) .. " legendary=" .. tostring(allow.legendary))
+        .. " rare=" .. tostring(allow.rare) .. " legendary=" .. tostring(allow.legendary)
+        .. " mythic=" .. tostring(allow.mythic))
     return allow
 end
 
 -- Shared rarity pattern of the tick: one list of slot rarities used by BOTH
 -- sides (same rarity, not same buff). A slot may be legendary/rare when at
 -- least one side is eligible; the other side downgrades its slot with a log.
--- At most one legendary slot per choice.
-local function RollRarityPattern(allowRare, allowLegendary)
+-- At most one legendary and one mythic slot per choice.
+local function RollRarityPattern(allowRare, allowLegendary, allowMythic)
     local pattern = {}
     local legendaryUsed = false
+    local mythicUsed = false
     for i = 1, OPTIONS_PER_TICK do
         local roll = Random(1, 100)
-        -- rare owns the fixed window (20, 20+35]: when the legendary branch does
-        -- not fire (not allowed / already used), rolls <= 20 stay common, so the
-        -- rare chance is always exactly RARE_CHANCE_PERCENT (was 55% before)
-        if allowLegendary and (not legendaryUsed) and roll <= LEGENDARY_CHANCE_PERCENT then
+        -- Every tier owns a fixed, non-overlapping roll window. If a tier is
+        -- locked/on cooldown, its window stays common instead of inflating a
+        -- lower tier's probability.
+        if allowMythic and (not mythicUsed) and roll <= MYTHIC_CHANCE_PERCENT then
+            pattern[i] = "mythic"
+            mythicUsed = true
+        elseif allowLegendary and (not legendaryUsed)
+                and roll > MYTHIC_CHANCE_PERCENT
+                and roll <= MYTHIC_CHANCE_PERCENT + LEGENDARY_CHANCE_PERCENT then
             pattern[i] = "legendary"
             legendaryUsed = true
-        elseif allowRare and roll > LEGENDARY_CHANCE_PERCENT
-                and roll <= LEGENDARY_CHANCE_PERCENT + RARE_CHANCE_PERCENT then
+        elseif allowRare and roll > MYTHIC_CHANCE_PERCENT + LEGENDARY_CHANCE_PERCENT
+                and roll <= MYTHIC_CHANCE_PERCENT + LEGENDARY_CHANCE_PERCENT
+                    + RARE_CHANCE_PERCENT then
             pattern[i] = "rare"
         else
             pattern[i] = "common"
@@ -170,16 +193,24 @@ end
 -- filters are already applied by AvailableBuffs.
 local function FillSideOptions(sideName, pattern, allow, avoidIds)
     local available = AvailableBuffs(sideName)
-    local buckets = { common = {}, rare = {}, legendary = {} }
+    local buckets = { common = {}, rare = {}, legendary = {}, mythic = {} }
     for _, buff in available do
         table.insert(buckets[BuffRarity(buff)], buff)
     end
 
     local options = {}
+    local usedRarity = { legendary = false, mythic = false }
     for _, wanted in pattern do
         local rarity = wanted
         -- side-specific eligibility downgrades
-        if rarity == "legendary" and not allow.legendary then
+        if rarity == "mythic" and not allow.mythic then
+            local fallback = allow.legendary and (not usedRarity.legendary) and "legendary"
+                or (allow.rare and "rare" or "common")
+            LOG("FAF_BUFF_DRAFT: rarity downgrade side=" .. sideName
+                .. " from=mythic to=" .. fallback
+                .. " reason=" .. tostring(allow.mythicReason))
+            rarity = fallback
+        elseif rarity == "legendary" and not allow.legendary then
             LOG("FAF_BUFF_DRAFT: rarity downgrade side=" .. sideName
                 .. " from=legendary to=" .. (allow.rare and "rare" or "common")
                 .. " reason=" .. tostring(allow.legendaryReason))
@@ -189,6 +220,14 @@ local function FillSideOptions(sideName, pattern, allow, avoidIds)
                 .. " from=rare to=common reason=" .. tostring(allow.rareReason))
             rarity = "common"
         end
+        -- Candidate fallbacks must not accidentally create a second top-tier
+        -- option after the shared rarity pattern already used that tier.
+        if rarity == "mythic" and usedRarity.mythic then
+            rarity = allow.legendary and (not usedRarity.legendary) and "legendary"
+                or (allow.rare and "rare" or "common")
+        elseif rarity == "legendary" and usedRarity.legendary then
+            rarity = allow.rare and "rare" or "common"
+        end
         -- candidate downgrades when a bucket is empty
         local chosen = nil
         while true do
@@ -196,7 +235,14 @@ local function FillSideOptions(sideName, pattern, allow, avoidIds)
             if chosen then
                 break
             end
-            if rarity == "legendary" then
+            if rarity == "mythic" then
+                local fallback = allow.legendary and (not usedRarity.legendary) and "legendary"
+                    or (allow.rare and "rare" or "common")
+                LOG("FAF_BUFF_DRAFT: rarity downgrade side=" .. sideName
+                    .. " from=mythic to=" .. fallback
+                    .. " reason=no mythic candidates left")
+                rarity = fallback
+            elseif rarity == "legendary" then
                 LOG("FAF_BUFF_DRAFT: rarity downgrade side=" .. sideName
                     .. " from=legendary to=rare reason=no legendary candidates left")
                 rarity = "rare"
@@ -217,15 +263,26 @@ local function FillSideOptions(sideName, pattern, allow, avoidIds)
                     .. " from=common to=rare reason=no common candidates left")
             end
         end
-        if (not chosen) and allow.legendary then
+        if (not chosen) and allow.legendary and (not usedRarity.legendary) then
             chosen = TakeRandomBuff(buckets.legendary, avoidIds)
             if chosen then
                 LOG("FAF_BUFF_DRAFT: rarity downgrade side=" .. sideName
                     .. " from=common to=legendary reason=only legendary candidates left")
             end
         end
+        if (not chosen) and allow.mythic and (not usedRarity.mythic) then
+            chosen = TakeRandomBuff(buckets.mythic, avoidIds)
+            if chosen then
+                LOG("FAF_BUFF_DRAFT: rarity downgrade side=" .. sideName
+                    .. " from=common to=mythic reason=only mythic candidates left")
+            end
+        end
         if chosen then
             table.insert(options, chosen)
+            local chosenRarity = BuffRarity(chosen)
+            if usedRarity[chosenRarity] ~= nil then
+                usedRarity[chosenRarity] = true
+            end
             avoidIds[chosen.id] = true -- steer the other side away from this id
         end
     end
@@ -313,12 +370,26 @@ local function ApplyResolvedPick(sideName, choice, buffId, reason)
     table.insert(PickedHistory[sideName], buffId)
     LOG("FAF_BUFF_DRAFT: " .. sideName .. " picked: " .. tostring(buffId) .. " (" .. reason .. ")")
 
-    -- every resolved draft choice counts down the legendary offer cooldown
-    -- (admin grants are not draft choices)
-    if reason ~= "admin grant" and LegendaryCooldownRemaining[sideName] > 0 then
+    -- Resolved choices after the offer count down the top-tier cooldowns. The
+    -- choice containing the offer itself does not consume one cooldown step;
+    -- admin grants are not draft choices either.
+    local offeredLegendary = false
+    local offeredMythic = false
+    for _, option in choice.options or {} do
+        offeredLegendary = offeredLegendary or BuffRarity(option) == "legendary"
+        offeredMythic = offeredMythic or BuffRarity(option) == "mythic"
+    end
+    if reason ~= "admin grant" and (not offeredLegendary)
+            and LegendaryCooldownRemaining[sideName] > 0 then
         LegendaryCooldownRemaining[sideName] = LegendaryCooldownRemaining[sideName] - 1
         LOG("FAF_BUFF_DRAFT: legendary cooldown side=" .. sideName
             .. " remaining=" .. tostring(LegendaryCooldownRemaining[sideName]))
+    end
+    if reason ~= "admin grant" and (not offeredMythic)
+            and MythicCooldownRemaining[sideName] > 0 then
+        MythicCooldownRemaining[sideName] = MythicCooldownRemaining[sideName] - 1
+        LOG("FAF_BUFF_DRAFT: mythic cooldown side=" .. sideName
+            .. " remaining=" .. tostring(MythicCooldownRemaining[sideName]))
     end
     LOG("FAF_BUFF_DRAFT: " .. sideName .. " picked history: " .. BuffIdsToString(PickedHistory[sideName]))
 
@@ -352,7 +423,10 @@ local function DraftSide(tick, sideName, armies, pattern, allow, avoidIds)
             LegendaryCooldownRemaining[sideName] = LEGENDARY_COOLDOWN_CHOICES
             LOG("FAF_BUFF_DRAFT: legendary cooldown side=" .. sideName
                 .. " remaining=" .. tostring(LEGENDARY_COOLDOWN_CHOICES))
-            break
+        elseif BuffRarity(option) == "mythic" then
+            MythicCooldownRemaining[sideName] = MYTHIC_COOLDOWN_CHOICES
+            LOG("FAF_BUFF_DRAFT: mythic cooldown side=" .. sideName
+                .. " remaining=" .. tostring(MYTHIC_COOLDOWN_CHOICES))
         end
     end
 
@@ -367,7 +441,8 @@ local function DraftSide(tick, sideName, armies, pattern, allow, avoidIds)
         -- AI-only side: nobody to wait for, auto-pick immediately
         LOG("FAF_BUFF_DRAFT: " .. sideName .. " has no human chooser, auto-picking first option")
         ApplyResolvedPick(sideName,
-            { tick = tick, armies = armies, chooserArmy = nil }, options[1].id, "no human chooser")
+            { tick = tick, armies = armies, chooserArmy = nil, options = options },
+            options[1].id, "no human chooser")
         return
     end
 
@@ -600,7 +675,8 @@ function RunDraftTick(tick, sides)
     local allowArtem = SideRarityAllowance("Artem")
     local pattern = RollRarityPattern(
         allowMark.rare or allowArtem.rare,
-        allowMark.legendary or allowArtem.legendary)
+        allowMark.legendary or allowArtem.legendary,
+        allowMark.mythic or allowArtem.mythic)
     local patternIds = {}
     for _, rarity in pattern do
         table.insert(patternIds, tostring(rarity))

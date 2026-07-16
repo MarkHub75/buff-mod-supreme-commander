@@ -204,8 +204,16 @@ local function RebuildRows(sideName, picks)
     local total = 0
     local index = 1
     for _, pick in picks do
+        local entry = CatalogEntry(pick.id)
+        local rarity = (entry and entry.rarity) or "common"
+        local prefix = rarity == "mythic" and "[MYTHIC] " or ""
+        local font = rarity == "mythic" and 'Arial Bold' or UIUtil.bodyFont
         local titleText = UIUtil.CreateText(client,
-            tostring(index) .. ". " .. tostring(pick.title), 14, UIUtil.bodyFont)
+            tostring(index) .. ". " .. prefix .. tostring(pick.title),
+            rarity == "mythic" and 15 or 14, font, rarity == "mythic")
+        if rarity == "mythic" then
+            titleText:SetColor('FFFF4FD8')
+        end
         -- hit test stays enabled: the row shows the full-detail tooltip on hover
         AddBuffTooltip(titleText, pick)
         if prev then
@@ -285,7 +293,9 @@ local function BuildActiveRows(states)
     local total = 0
     for _, state in states do
         local buffId = state.buffId
-        local button = UIUtil.CreateButtonWithDropshadow(activeArea, '/BUTTON/medium/', 'Activate')
+        local isCommanderPanel = buffId == 'commander_apotheosis_1'
+        local button = UIUtil.CreateButtonWithDropshadow(activeArea, '/BUTTON/medium/',
+            isCommanderPanel and 'Upgrades' or 'Activate')
         LayoutHelpers.AtRightIn(button, activeArea, 0)
         if prev then
             LayoutHelpers.AnchorToBottom(button, prev, 4)
@@ -293,7 +303,9 @@ local function BuildActiveRows(states)
             LayoutHelpers.AtTopIn(button, activeArea, 0)
         end
         button.OnClick = function(self, modifiers)
-            if ActiveBuffNeedsTarget[buffId] then
+            if isCommanderPanel then
+                import('/mods/BuffDraft/lua/ui/commander_upgrades_ui.lua').Open()
+            elseif ActiveBuffNeedsTarget[buffId] then
                 LOG("FAF_BUFF_DRAFT_UI: targeting mode started for " .. tostring(buffId))
                 CommandMode.StartCommandMode('ping', {
                     cursor = 'RULEUCC_Attack', -- the attack-ping cursor (multifunction.lua)
@@ -305,7 +317,12 @@ local function BuildActiveRows(states)
             end
         end
 
-        local label = UIUtil.CreateText(activeArea, "", 14, UIUtil.bodyFont)
+        local label = UIUtil.CreateText(activeArea, "", 14,
+            isCommanderPanel and 'Arial Bold' or UIUtil.bodyFont,
+            isCommanderPanel)
+        if isCommanderPanel then
+            label:SetColor('FFFF4FD8')
+        end
         label:DisableHitTest()
         LayoutHelpers.AtLeftIn(label, activeArea, 0)
         LayoutHelpers.AtVerticalCenterIn(label, button)
@@ -320,6 +337,11 @@ local function BuildActiveRows(states)
 end
 
 local function UpdateActiveRow(row, state)
+    if state.buffId == 'commander_apotheosis_1' then
+        row.label:SetText('[MYTHIC] Commander Apotheosis')
+        row.button:Enable()
+        return
+    end
     if state.ready then
         row.label:SetText(ActiveBuffTitle(state.buffId) .. ": READY")
         row.button:Enable()

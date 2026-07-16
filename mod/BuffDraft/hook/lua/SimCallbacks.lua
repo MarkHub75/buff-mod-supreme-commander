@@ -26,20 +26,20 @@ Callbacks.BuffDraftAdminRemoveBuff = function(data, units)
     import('/mods/BuffDraft/lua/draft.lua').AdminRemoveBuff(data, senderArmy)
 end
 
--- AI control "Take AI units": the owner clicks a point, allied AI land units
--- around it transfer to the owner. Army comes from the command source only;
--- owner nickname, point and every unit are validated in ai_control/control.lua.
+-- AI control "Take AI units": the owner clicks an allied AI unit/structure and
+-- that exact entity transfers to the owner. Army comes from the command source
+-- only; owner nickname and target entity are validated in ai_control/control.lua.
 Callbacks.BuffDraftTakeAIUnits = function(data, units)
     local senderArmy = import('/lua/simutils.lua').GetCurrentCommandSourceArmy()
     if not senderArmy then
-        LOG("FAF_AI_CONTROL: take ignored: no command source army (observer/replay)")
+        LOG("FAF_BUFF_DRAFT_AI_CONTROL: take ignored: no command source army (observer/replay)")
         return
     end
     local ok, err = pcall(function()
         import('/mods/BuffDraft/lua/ai_control/control.lua').TakeAIUnitsAtPoint(senderArmy, data)
     end)
     if not ok then
-        WARN("FAF_AI_CONTROL: take failed: " .. tostring(err))
+        WARN("FAF_BUFF_DRAFT_AI_CONTROL: take failed: " .. tostring(err))
     end
 end
 
@@ -56,4 +56,29 @@ Callbacks.BuffDraftUseActive = function(data, units)
         return
     end
     import('/mods/BuffDraft/lua/effects.lua').UseActiveBuff(senderArmy, data.buffId, data.payload)
+end
+
+-- Mythic Commander Apotheosis: UI chooses one of the four faction packages,
+-- while SIM owns army identity, costs, availability and the actual effects.
+Callbacks.BuffDraftCommanderUpgrade = function(data, units)
+    local senderArmy = import('/lua/simutils.lua').GetCurrentCommandSourceArmy()
+    if not senderArmy then
+        LOG("FAF_BUFF_DRAFT: commander upgrade ignored: no command source army")
+        return
+    end
+    local ok, err = pcall(function()
+        import('/mods/BuffDraft/lua/effects.lua').RequestCommanderUpgrade(
+            senderArmy, data and data.packageId)
+    end)
+    if not ok then
+        WARN("FAF_BUFF_DRAFT: commander upgrade callback failed: " .. tostring(err))
+    end
+end
+
+Callbacks.BuffDraftCommanderUpgradeSync = function(data, units)
+    local senderArmy = import('/lua/simutils.lua').GetCurrentCommandSourceArmy()
+    if not senderArmy then
+        return
+    end
+    import('/mods/BuffDraft/lua/effects.lua').RequestCommanderUpgradeSync(senderArmy)
 end

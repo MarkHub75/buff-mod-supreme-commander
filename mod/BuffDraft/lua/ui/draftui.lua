@@ -40,11 +40,17 @@ end
 -- has no word wrap, so wrap manually via maui text.lua WrapText like QuickDialog does)
 -- and a large button on the right. Returns the block and its computed pixel height.
 local function CreateOptionBlock(dialog, option, onPick)
+    local rarity = option.rarity or "common"
     local block = Bitmap(dialog)
-    block:SetSolidColor('78101820')
+    if rarity == "mythic" then
+        block:SetSolidColor('D0380828') -- deep crimson/magenta, unique to mythic
+    else
+        block:SetSolidColor('78101820')
+    end
     LayoutHelpers.SetWidth(block, BLOCK_WIDTH)
 
-    local button = UIUtil.CreateButtonWithDropshadow(block, '/BUTTON/large/', 'Choose')
+    local buttonText = rarity == "mythic" and 'CHOOSE MYTHIC' or 'Choose'
+    local button = UIUtil.CreateButtonWithDropshadow(block, '/BUTTON/large/', buttonText)
     LayoutHelpers.AtRightIn(button, block, 10)
     LayoutHelpers.AtVerticalCenterIn(button, block)
     button.OnClick = function(self, modifiers)
@@ -55,21 +61,36 @@ local function CreateOptionBlock(dialog, option, onPick)
 
     -- rarity comes from the sim with each option (catalog data); display only.
     -- Colored title + text tag, so the tier reads even without color perception.
-    local rarity = option.rarity or "common"
     local titleText = tostring(option.title)
     local titleColor = nil
+    local titleFont = UIUtil.titleFont
+    local titleSize = 18
     if rarity == "rare" then
         titleText = titleText .. "  [Rare]"
         titleColor = 'FF80FF80' -- green
     elseif rarity == "legendary" then
         titleText = titleText .. "  [Legendary]"
         titleColor = 'FFC080FF' -- purple
+    elseif rarity == "mythic" then
+        titleText = "!!! MYTHIC !!!  " .. titleText
+        titleColor = 'FFFF4FD8' -- hot magenta; never shared with lower tiers
+        titleFont = 'Arial Bold' -- deliberately unique font for the mythic tier
+        titleSize = 20
     end
-    local title = UIUtil.CreateText(block, titleText, 18, UIUtil.titleFont)
+    local title = UIUtil.CreateText(block, titleText, titleSize, titleFont, rarity == "mythic")
     if titleColor then
         title:SetColor(titleColor)
     end
     LayoutHelpers.AtLeftTopIn(title, block, 12, 8)
+
+    if rarity == "mythic" then
+        local accent = Bitmap(block)
+        accent:SetSolidColor('FFFFD700') -- gold importance stripe
+        accent.Height:Set(LayoutHelpers.ScaleNumber(3))
+        accent.Width:Set(function() return block.Width() end)
+        LayoutHelpers.AtLeftTopIn(accent, block, 0, 0)
+        accent:DisableHitTest()
+    end
 
     local descTexts = {}
     descTexts[1] = UIUtil.CreateText(block, "", 14, UIUtil.bodyFont)
@@ -191,6 +212,10 @@ function ProcessEvents(events)
         elseif event.event == "active" then
             Dispatch("active", function()
                 import('/mods/BuffDraft/lua/ui/history.lua').UpdateActive(event)
+            end)
+        elseif event.event == "commander_upgrades" then
+            Dispatch("commander-upgrades", function()
+                import('/mods/BuffDraft/lua/ui/commander_upgrades_ui.lua').ProcessEvent(event)
             end)
         end
     end

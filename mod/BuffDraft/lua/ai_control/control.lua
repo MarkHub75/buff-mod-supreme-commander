@@ -1,15 +1,16 @@
 -- BuffDraft AI control (sim side): the "Take AI units" tool for the owner
--- player. The owner clicks a map point; every allied AI land unit around it is
+-- player. The owner clicks an allied AI unit/structure; that exact entity is
 -- transferred to the owner's army through the stock FAF transfer path -
 -- SimUtils.TransferUnitsOwnership, the same function the diplomacy "give units"
 -- feature uses (SimUtils.GiveUnitsToPlayer), so veterancy/upgrades/silo ammo
 -- survive and no blueprint or army state is touched by hand.
 --
--- The UI sends ONLY a point; everything is validated here sim-side:
+-- The UI sends ONLY an entity id; everything is validated here sim-side:
 -- sender is the configured owner (nickname re-checked against the brain),
--- source units belong to allied non-civilian AI armies (never Mark - he is an
--- enemy and fails IsAlly; never human allies; never the sender's own units),
--- ACUs and experimentals are excluded by config, one click is capped.
+-- source entities belong to allied non-civilian AI armies and may be land,
+-- naval, air or structures (never Mark - he is an enemy and fails IsAlly; never
+-- human allies; never the sender's own units).
+-- ACUs and experimentals still obey the config gates.
 --
 -- ISOLATION: the tool lives in lua/ai_control/; outside touch points are the
 -- AIControl*/EnableAIControl config knobs, one callback in
@@ -27,50 +28,46 @@ local function Knob(name, default)
 end
 
 local EnableAIControl = Knob('EnableAIControl', false)
-local TakeRadius = Knob('AIControlTakeRadius', 30)
-local MaxUnitsPerTake = Knob('AIControlMaxUnitsPerTake', 60)
 local AllowACU = Knob('AIControlAllowACU', false)
 local IncludeExperimentals = Knob('AIControlIncludeExperimentals', false)
 local OwnerNickname = Knob('AdminOwnerNickname', "")
-
--- what a click may take: mobile land units; INSIGNIFICANTUNIT never transfers
--- anyway (SimUtils filters it), excluded here so it is not counted as skipped.
--- With experimentals enabled, mobile experimentals of ANY layer are included
--- (Czar/Tempest too, not just land ones). COMMAND is subtracted last: ACU stays
--- untakeable regardless (SCUs are SUBCOMMANDER, they transfer fine).
-local function BuildTakeCategory()
-    local cat = categories.LAND * categories.MOBILE - categories.INSIGNIFICANTUNIT
-    if IncludeExperimentals then
-        cat = cat + categories.EXPERIMENTAL * categories.MOBILE
-    else
-        cat = cat - categories.EXPERIMENTAL
-    end
-    if not AllowACU then
-        cat = cat - categories.COMMAND
-    end
-    return cat
-end
-local TakeCat = BuildTakeCategory()
+local TransferableCat = categories.ALLUNITS - categories.INSIGNIFICANTUNIT
 
 local function UnitLabel(unit)
     return string.format("%s#%s", tostring(unit:GetBlueprint().BlueprintId),
         tostring(unit:GetEntityId()))
 end
 
--- UI payload is raw: validate types, NaN and map bounds before use
-local function ValidPoint(data)
+-- UI payload is raw: validate the id, then resolve to the current sim entity.
+local function ResolveTarget(data)
     if type(data) ~= 'table' then
-        return nil
+        return nil, 'bad_payload'
     end
-    local x, z = data.x, data.z
-    if type(x) ~= 'number' or type(z) ~= 'number' or x ~= x or z ~= z then
-        return nil
+    local id = data.entityId
+    if type(id) ~= 'number' and type(id) ~= 'string' then
+        return nil, 'missing_entity'
     end
-    local size = ScenarioInfo.size
-    if not size or x < 0 or z < 0 or x > size[1] or z > size[2] then
-        return nil
+    if type(id) == 'string' then
+        id = tonumber(id)
+        if not id then
+            return nil, 'bad_entity'
+        end
     end
-    return { x, GetSurfaceHeight(x, z), z }
+    local target = GetEntityById(id)
+    if not target or not IsEntity(target) then
+        return nil, 'entity_not_found'
+    end
+    if type(target.Army) ~= 'number' or not target.GetBlueprint or not target.GetEntityId
+        or not target.GetFractionComplete or not target.IsUnitState then
+        return nil, 'not_unit'
+    end
+    if type(data.blueprintId) == 'string' then
+        local bp = target:GetBlueprint()
+        if (not bp) or bp.BlueprintId ~= data.blueprintId then
+            return nil, 'entity_mismatch'
+        end
+    end
+    return target, nil
 end
 
 -- nil when the unit may be taken, otherwise the skip reason.
@@ -91,6 +88,15 @@ local function SkipReason(unit, senderArmy)
     if not IsAlly(senderArmy, army) then
         return 'not_allied'
     end
+    if not EntityCategoryContains(TransferableCat, unit) then
+        return 'not_transferable'
+    end
+    if (not AllowACU) and EntityCategoryContains(categories.COMMAND, unit) then
+        return 'acu'
+    end
+    if (not IncludeExperimentals) and EntityCategoryContains(categories.EXPERIMENTAL, unit) then
+        return 'experimental'
+    end
     if unit:GetFractionComplete() < 1 then
         return 'under_construction'
     end
@@ -101,86 +107,58 @@ local function SkipReason(unit, senderArmy)
 end
 
 --- Sim entry point, called from the BuffDraftTakeAIUnits callback with the
---- command-source army (never UI data) and the raw clicked point.
+--- command-source army (never UI data) and the raw clicked entity id.
 function TakeAIUnitsAtPoint(senderArmy, data)
     if not EnableAIControl then
-        LOG("FAF_AI_CONTROL: disabled by config")
+        LOG("FAF_BUFF_DRAFT_AI_CONTROL: disabled by config")
         return
     end
     local senderBrain = ArmyBrains[senderArmy]
     if not senderBrain or senderBrain.BrainType ~= 'Human' or senderBrain.Civilian then
-        LOG("FAF_AI_CONTROL: request rejected army=" .. tostring(senderArmy) .. " reason=not_human")
+        LOG("FAF_BUFF_DRAFT_AI_CONTROL: request rejected army=" .. tostring(senderArmy) .. " reason=not_human")
         return
     end
     if OwnerNickname ~= "" and senderBrain.Nickname ~= OwnerNickname then
-        LOG("FAF_AI_CONTROL: request rejected army=" .. tostring(senderArmy)
+        LOG("FAF_BUFF_DRAFT_AI_CONTROL: request rejected army=" .. tostring(senderArmy)
             .. " nickname=" .. tostring(senderBrain.Nickname) .. " reason=not_owner")
         return
     end
-    local pos = ValidPoint(data)
-    if not pos then
-        LOG("FAF_AI_CONTROL: request rejected army=" .. tostring(senderArmy) .. " reason=bad_point")
+
+    local target, resolveReason = ResolveTarget(data)
+    if not target then
+        LOG("FAF_BUFF_DRAFT_AI_CONTROL: request rejected army=" .. tostring(senderArmy)
+            .. " reason=" .. tostring(resolveReason)
+            .. " entity=" .. tostring(data and data.entityId))
         return
     end
 
-    local candidates = {}
-    local skipped = 0
-    local around = senderBrain:GetUnitsAroundPoint(TakeCat, pos, TakeRadius, 'Ally')
-    for _, unit in around or {} do
-        if unit.Army ~= senderArmy then -- own units are not part of the request
-            local reason = SkipReason(unit, senderArmy)
-            if reason == 'dead' then
-                skipped = skipped + 1 -- no label: entity methods are unsafe on dead units
-            elseif reason then
-                skipped = skipped + 1
-                LOG(string.format("FAF_AI_CONTROL: skipped unit=%s reason=%s", UnitLabel(unit), reason))
-            else
-                local unitPos = unit:GetPosition()
-                table.insert(candidates, {
-                    unit = unit,
-                    dist = VDist2(unitPos[1], unitPos[3], pos[1], pos[3]),
-                    id = tostring(unit:GetEntityId()),
-                })
-            end
-        end
-    end
-
-    -- deterministic: nearest to the click first, entity id as the tie break
-    table.sort(candidates, function(a, b)
-        if a.dist ~= b.dist then
-            return a.dist < b.dist
-        end
-        return a.id < b.id
-    end)
-    local overCap = table.getn(candidates) - MaxUnitsPerTake
-    if overCap > 0 then
-        skipped = skipped + overCap
-        LOG(string.format("FAF_AI_CONTROL: skipped %d units reason=over_cap (max %d per take)",
-            overCap, MaxUnitsPerTake))
-        while table.getn(candidates) > MaxUnitsPerTake do
-            table.remove(candidates)
-        end
-    end
-
-    local count = table.getn(candidates)
-    LOG(string.format("FAF_AI_CONTROL: request take army=%d at=%d,%d radius=%d take=%d skipped=%d",
-        senderArmy, pos[1], pos[3], TakeRadius, count, skipped))
-    if count == 0 then
+    if target.Dead then
+        LOG("FAF_BUFF_DRAFT_AI_CONTROL: request skipped unit="
+            .. tostring(data.entityId) .. " reason=dead")
         return
     end
 
-    local units = {}
-    for _, candidate in candidates do
-        table.insert(units, candidate.unit)
-        LOG(string.format("FAF_AI_CONTROL: transferred unit=%s from army=%d to army=%d",
-            UnitLabel(candidate.unit), candidate.unit.Army, senderArmy))
+    if target.Army == senderArmy then
+        LOG("FAF_BUFF_DRAFT_AI_CONTROL: request skipped own unit=" .. UnitLabel(target))
+        return
     end
-    local newUnits = import('/lua/SimUtils.lua').TransferUnitsOwnership(units, senderArmy)
+
+    local reason = SkipReason(target, senderArmy)
+    if reason then
+        LOG(string.format("FAF_BUFF_DRAFT_AI_CONTROL: request skipped unit=%s reason=%s",
+            UnitLabel(target), reason))
+        return
+    end
+
+    local fromArmy = target.Army
+    LOG(string.format("FAF_BUFF_DRAFT_AI_CONTROL: request take unit=%s from army=%d to army=%d",
+        UnitLabel(target), fromArmy, senderArmy))
+
+    local newUnits = import('/lua/SimUtils.lua').TransferUnitsOwnership({ target }, senderArmy)
     local got = (newUnits and table.getn(newUnits)) or 0
-    LOG(string.format("FAF_AI_CONTROL: transfer done army=%d requested=%d transferred=%d",
-        senderArmy, count, got))
-    if got < count then
-        WARN("FAF_AI_CONTROL: transfer filtered " .. tostring(count - got)
-            .. " units (see SimUtils.TransferUnitsOwnership restrictions)")
+    LOG(string.format("FAF_BUFF_DRAFT_AI_CONTROL: transfer done army=%d requested=%d transferred=%d",
+        senderArmy, 1, got))
+    if got < 1 then
+        WARN("FAF_BUFF_DRAFT_AI_CONTROL: transfer filtered target unit (see SimUtils.TransferUnitsOwnership restrictions)")
     end
 end
