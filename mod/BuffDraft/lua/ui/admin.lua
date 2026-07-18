@@ -16,6 +16,7 @@ local UIUtil = import('/lua/ui/uiutil.lua')
 local LayoutHelpers = import('/lua/maui/layouthelpers.lua')
 local Window = import('/lua/maui/window.lua').Window
 local BuffDraftConfig = import('/mods/BuffDraft/lua/config.lua')
+local AdminAccess = import('/mods/BuffDraft/lua/admin_access.lua')
 local BuffsModule = import('/mods/BuffDraft/lua/buffs.lua')
 local BuffCatalog = BuffsModule.BuffCatalog
 local BuffStatus = BuffsModule.BuffStatus
@@ -230,16 +231,13 @@ function AccessAllowed()
         LOG("FAF_BUFF_DRAFT_ADMIN: access denied DebugAdmin=false in config.lua")
         return false
     end
-    local owner = BuffDraftConfig.AdminOwnerNickname
-    if owner and owner ~= "" then
-        local nickname = LocalNickname()
-        if nickname ~= owner then
-            LOG("FAF_BUFF_DRAFT_ADMIN: access denied " .. tostring(nickname)
-                .. " (admin owner is " .. owner .. ")")
-            return false
-        end
-        LOG("FAF_BUFF_DRAFT_ADMIN: access allowed " .. owner)
+    local nickname = LocalNickname()
+    if not AdminAccess.IsNicknameAllowed(nickname) then
+        LOG("FAF_BUFF_DRAFT_ADMIN: access denied " .. tostring(nickname)
+            .. " (admin owners: " .. AdminAccess.ConfiguredOwnersText() .. ")")
+        return false
     end
+    LOG("FAF_BUFF_DRAFT_ADMIN: access allowed " .. tostring(nickname))
     return true
 end
 

@@ -10,6 +10,7 @@ local Window = import('/lua/maui/window.lua').Window
 local Tooltip = import('/lua/ui/game/tooltip.lua')
 local CommandMode = import('/lua/ui/game/commandmode.lua')
 local BuffDraftConfig = import('/mods/BuffDraft/lua/config.lua')
+local AdminAccess = import('/mods/BuffDraft/lua/admin_access.lua')
 -- data-only catalog, shared with the sim: used here only for tooltip text
 local BuffCatalog = import('/mods/BuffDraft/lua/buffs.lua').BuffCatalog
 
@@ -53,11 +54,8 @@ local function LocalPlayerIsAdminOwner()
     if not BuffDraftConfig.DebugAdmin then
         return false
     end
-    local owner = BuffDraftConfig.AdminOwnerNickname
-    if not owner or owner == "" then
-        return true
-    end
-    return import('/mods/BuffDraft/lua/ui/admin.lua').LocalNickname() == owner
+    local nickname = import('/mods/BuffDraft/lua/ui/admin.lua').LocalNickname()
+    return AdminAccess.IsNicknameAllowed(nickname)
 end
 
 local function UpdateAdminButtonVisibility()
@@ -103,7 +101,14 @@ local function CreatePanel()
         LOG("FAF_BUFF_DRAFT: UI panel " .. (collapsed and "collapsed" or "expanded"))
     end
     panel.OnClose = function(self)
-        self:Hide() -- reappears on the next pending/history update
+        -- Never hide the only way back to this panel. Treat the close button as
+        -- collapse: the title bar and pin checkbox remain available to expand it.
+        if self._pinBtn and not self._pinBtn:IsChecked() then
+            self._pinBtn:SetCheck(true)
+        else
+            collapsed = true
+            ApplyPanelHeight()
+        end
     end
 
     -- pending-choices section at the top of the client area
@@ -159,6 +164,20 @@ local function EnsurePanel()
     end
     UpdateAdminButtonVisibility()
     panel:Show()
+end
+
+-- Called by the UserSync hook from the start of the match. Rechecking access is
+-- intentional: the first UI beat can arrive before GetArmiesTable has populated
+-- the local nickname, but only a visibility change triggers another layout pass.
+function Initialize()
+    if not panel then
+        CreatePanel()
+        panel:Show()
+        ApplyPanelHeight()
+        LOG("FAF_BUFF_DRAFT: UI panel initialized")
+    elseif UpdateAdminButtonVisibility() then
+        ApplyPanelHeight()
+    end
 end
 
 local function CatalogEntry(id)

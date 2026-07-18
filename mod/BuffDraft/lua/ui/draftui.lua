@@ -2,7 +2,8 @@
 -- the pending-choice queue state, the panel (history.lua) shows an indicator and a
 -- Choose button, and this module opens the choice window for the first pending
 -- choice on demand. The UI only displays sim data and sends the pick (with the
--- choice's tick) back via SimCallback; all validation lives sim-side.
+-- choice's tick) or the one-time reroll request back via SimCallback; all
+-- validation lives sim-side.
 
 local UIUtil = import('/lua/ui/uiutil.lua')
 local LayoutHelpers = import('/lua/maui/layouthelpers.lua')
@@ -19,6 +20,7 @@ local PendingState = nil
 
 local ActivePopup = nil
 local ActiveTick = nil
+local ActiveRevision = nil
 
 local function ClosePopup()
     -- UI controls have no :IsDestroyed() method; FAF uses the global IsDestroyed()
@@ -27,13 +29,30 @@ local function ClosePopup()
     end
     ActivePopup = nil
     ActiveTick = nil
+    ActiveRevision = nil
 end
 
 local function SendPick(side, buffId, tick)
     LOG("FAF_BUFF_DRAFT: UI sending pick " .. tostring(buffId) .. " for side "
         .. tostring(side) .. " tick " .. tostring(tick))
     SimCallback({ Func = 'BuffDraftPick', Args = { side = side, buffId = buffId, tick = tick } })
-    ClosePopup()
+
+    -- Maui's Button.OnRelease calls OnClick and then self:Play(). Closing the
+    -- popup inside OnClick destroys that button before self:Play(), producing
+    -- "Game object has been destroyed" from button.lua. Let OnRelease finish.
+    local popupToClose = ActivePopup
+    ForkThread(function()
+        WaitFrames(1)
+        if ActivePopup == popupToClose then
+            ClosePopup()
+        end
+    end)
+end
+
+local function SendReroll(side, tick)
+    LOG("FAF_BUFF_DRAFT: UI sending reroll for side " .. tostring(side)
+        .. " tick " .. tostring(tick))
+    SimCallback({ Func = 'BuffDraftReroll', Args = { side = side, tick = tick } })
 end
 
 -- One option block: solid background, title line, wrapped description (MultiLineText
@@ -118,9 +137,11 @@ local function CreateOptionBlock(dialog, option, onPick)
     return block, blockHeight
 end
 
-local function ShowChoiceWindow(side, choice)
+local function ShowChoiceWindow(side, choice, rerollAvailable)
+    local revision = choice.revision or 0
     -- this choice window is already open: don't create a duplicate
-    if ActivePopup and (not IsDestroyed(ActivePopup)) and ActiveTick == choice.tick then
+    if ActivePopup and (not IsDestroyed(ActivePopup))
+            and ActiveTick == choice.tick and ActiveRevision == revision then
         return
     end
     ClosePopup()
@@ -153,6 +174,33 @@ local function ShowChoiceWindow(side, choice)
         totalHeight = totalHeight + LayoutHelpers.ScaleNumber(10) + blockHeight
         prev = block
     end
+
+    local rerollNote = UIUtil.CreateText(dialog,
+        rerollAvailable and 'One reroll per game; rarity slots stay unchanged.'
+            or 'Reroll already used for this game.',
+        12, UIUtil.bodyFont)
+    LayoutHelpers.AnchorToBottom(rerollNote, prev, 10)
+    LayoutHelpers.AtHorizontalCenterIn(rerollNote, dialog)
+    totalHeight = totalHeight + LayoutHelpers.ScaleNumber(10) + rerollNote:Height()
+
+    local rerollButton = UIUtil.CreateButtonWithDropshadow(dialog, '/BUTTON/large/',
+        rerollAvailable and 'REROLL (1 / GAME)' or 'REROLL USED')
+    LayoutHelpers.AnchorToBottom(rerollButton, rerollNote, 4)
+    LayoutHelpers.AtHorizontalCenterIn(rerollButton, dialog)
+    totalHeight = totalHeight + LayoutHelpers.ScaleNumber(4) + rerollButton:Height()
+    if rerollAvailable then
+        local rerollSent = false
+        rerollButton.OnClick = function(self, modifiers)
+            if rerollSent or pickSent then
+                return
+            end
+            rerollSent = true
+            self:Disable()
+            SendReroll(side, choice.tick)
+        end
+    else
+        rerollButton:Disable()
+    end
     dialog.Height:Set(math.floor(totalHeight + LayoutHelpers.ScaleNumber(15)))
 
     local popup = Popup(parent, dialog)
@@ -162,8 +210,9 @@ local function ShowChoiceWindow(side, choice)
 
     ActivePopup = popup
     ActiveTick = choice.tick
+    ActiveRevision = revision
     LOG("FAF_BUFF_DRAFT: UI choice window shown for side " .. tostring(side)
-        .. " tick " .. tostring(choice.tick))
+        .. " tick " .. tostring(choice.tick) .. " revision " .. tostring(revision))
 end
 
 --- Called from the panel's Choose button: opens the first pending choice, if any.
@@ -172,7 +221,7 @@ function OpenPendingChoice()
         LOG("FAF_BUFF_DRAFT: UI no pending choices to open")
         return
     end
-    ShowChoiceWindow(PendingState.side, PendingState.first)
+    ShowChoiceWindow(PendingState.side, PendingState.first, PendingState.rerollAvailable)
 end
 
 --- The side name of the local player, learned from its pending events; nil until
@@ -200,6 +249,13 @@ function ProcessEvents(events)
                 Dispatch("pending", function()
                     import('/mods/BuffDraft/lua/ui/history.lua').UpdatePending(event)
                 end)
+                -- A successful reroll keeps the same tick but increments the
+                -- revision; rebuild an already-open choice window with SIM data.
+                if ActivePopup and (not IsDestroyed(ActivePopup)) and event.first then
+                    Dispatch("pending-choice-window", function()
+                        ShowChoiceWindow(event.side, event.first, event.rerollAvailable)
+                    end)
+                end
             end
         elseif event.event == "history" then
             Dispatch("history", function()
@@ -216,6 +272,10 @@ function ProcessEvents(events)
         elseif event.event == "commander_upgrades" then
             Dispatch("commander-upgrades", function()
                 import('/mods/BuffDraft/lua/ui/commander_upgrades_ui.lua').ProcessEvent(event)
+            end)
+        elseif event.event == "ai_control_result" then
+            Dispatch("ai-control-result", function()
+                import('/mods/BuffDraft/lua/ai_control/control_ui.lua').ProcessResult(event)
             end)
         end
     end

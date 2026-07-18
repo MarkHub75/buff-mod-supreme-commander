@@ -49,6 +49,18 @@ local ARTILLERY_RANGE_MULT = Knob('ARTILLERY_RANGE_MULT', 1.5)
 local TACTICAL_RANGE_MULT = Knob('TACTICAL_RANGE_MULT', 2.0)
 local SHIELD_HEALTH_MULT = Knob('SHIELD_HEALTH_MULT', 2.0)
 local MOBILE_SHIELD_HEALTH_MULT = Knob('MOBILE_SHIELD_HEALTH_MULT', 2.0)
+local SHIELD_HEALTH_2_HEALTH_MULT = Knob('SHIELD_HEALTH_2_HEALTH_MULT', 1.5)
+local SHIELD_HEALTH_2_RADIUS_MULT = math.sqrt(Knob('SHIELD_HEALTH_2_AREA_MULT', 1.4))
+local TACTICAL_RANGE_2_DAMAGE_RADIUS_MULT = Knob('TACTICAL_RANGE_2_DAMAGE_RADIUS_MULT', 3.0)
+local AIR_SPEED_2_ROF_MULT = Knob('AIR_SPEED_2_ROF_MULT', 2.0)
+local ACU_REGEN_2_HEALTH_ADD = Knob('ACU_REGEN_2_HEALTH_ADD', 5000)
+local ARTILLERY_RANGE_2_DAMAGE_RADIUS_MULT = Knob('ARTILLERY_RANGE_2_DAMAGE_RADIUS_MULT', 2.0)
+local ARTILLERY_RANGE_2_ROF_MULT = Knob('ARTILLERY_RANGE_2_ROF_MULT', 1.4)
+local MOBILE_SHIELDS_2_HEALTH_MULT = Knob('MOBILE_SHIELDS_2_HEALTH_MULT', 3.0)
+local MOBILE_SHIELDS_2_RADIUS_MULT = Knob('MOBILE_SHIELDS_2_RADIUS_MULT', 1.3)
+local NAVAL_ARMOR_2_HEALTH_MULT = Knob('NAVAL_ARMOR_2_HEALTH_MULT', 3.0)
+local EXPERIMENTAL_HEALTH_2_HEALTH_MULT = Knob('EXPERIMENTAL_HEALTH_2_HEALTH_MULT', 2.0)
+local EXPERIMENTAL_HEALTH_2_REGEN_ADD = Knob('EXPERIMENTAL_HEALTH_2_REGEN_ADD', 15)
 
 local DRONE_FOUNDRY_INTERVAL = Knob('DRONE_FOUNDRY_INTERVAL', 45)
 local DRONE_FOUNDRY_MAX_PER_WAVE = Knob('DRONE_FOUNDRY_MAX_PER_WAVE', 4)
@@ -57,9 +69,13 @@ local ENGINEER_SWARM_MAX_PER_WAVE = Knob('ENGINEER_SWARM_MAX_PER_WAVE', 2)
 local EMERGENCY_FAB_BUILD_MULT = Knob('EMERGENCY_FAB_BUILD_MULT', 3.0)
 local OVERCHARGED_SHIELD_MULT = Knob('OVERCHARGED_SHIELD_MULT', 2.5)
 local NAPALM_RADIUS_ADD = Knob('NAPALM_RADIUS_ADD', 1.0)
-local TELEPORT_SPEED_MULT = Knob('TELEPORT_SPEED_MULT', 2.0)
+local NAPALM_DOT_TIME = Knob('NAPALM_DOT_TIME', 3)
+local NAPALM_DOT_PULSES = Knob('NAPALM_DOT_PULSES', 3)
+local MOBILITY_DOCTRINE_SPEED_MULT = Knob('MOBILITY_DOCTRINE_SPEED_MULT', 2.0)
 local NANO_REGEN_ADD = Knob('NANO_REGEN_ADD', 5)
+local NANO_OUT_OF_COMBAT_DELAY = Knob('NANO_OUT_OF_COMBAT_DELAY', 10)
 local EXP_DISCOUNT_BUILD_MULT = Knob('EXP_DISCOUNT_BUILD_MULT', 2.5)
+local EXP_DISCOUNT_COST_MULT = Knob('EXP_DISCOUNT_COST_MULT', 0.5)
 local RAPID_SPEED_MULT = Knob('RAPID_SPEED_MULT', 2.0)
 local RAPID_DURATION = Knob('RAPID_DURATION', 60) -- buff Duration is in game seconds
 local FORTRESS_HP_MULT = Knob('FORTRESS_HP_MULT', 3.0)
@@ -80,11 +96,16 @@ local ORBITAL_LANCE_TICK_INTERVAL = Knob('ORBITAL_LANCE_TICK_INTERVAL', 0.4)
 local ORBITAL_LANCE_SHIELD_SCAN_RADIUS = 160 -- covers stock bubble shields incl. shield boats
 local CHAIN_BEAM_DAMAGE_MULT = Knob('CHAIN_BEAM_DAMAGE_MULT', 1.5)
 local CHAIN_BEAM_RADIUS_ADD = Knob('CHAIN_BEAM_RADIUS_ADD', 1.5)
+local CHAIN_ARC_RADIUS = Knob('CHAIN_ARC_RADIUS', 12)
+local CHAIN_ARC_TARGETS = Knob('CHAIN_ARC_TARGETS', 2)
+local CHAIN_ARC_DAMAGE_FRACTION = Knob('CHAIN_ARC_DAMAGE_FRACTION', 0.5)
 local RECLAIM_RATE_MULT = Knob('RECLAIM_RATE_MULT', 2.0)
+local RECLAIM_YIELD_MULT = Knob('RECLAIM_YIELD_MULT', 2.0)
 local TAC_SUPREMACY_RANGE_MULT = Knob('TAC_SUPREMACY_RANGE_MULT', 3.0)
 local TAC_SUPREMACY_BUILD_MULT = Knob('TAC_SUPREMACY_BUILD_MULT', 2.0)
 local MISSILE_STORM_ROF_MULT = Knob('MISSILE_STORM_ROF_MULT', 2.5)
 local MISSILE_STORM_BUILD_MULT = Knob('MISSILE_STORM_BUILD_MULT', 2.5)
+local MISSILE_STORM_PROJECTILES = Knob('MISSILE_STORM_PROJECTILES', 3)
 local AIR_SUP_SPEED_MULT = Knob('AIR_SUP_SPEED_MULT', 2.0)
 local AIR_SUP_DAMAGE_MULT = Knob('AIR_SUP_DAMAGE_MULT', 1.5)
 local AIR_SUP_HP_MULT = Knob('AIR_SUP_HP_MULT', 0.75)
@@ -99,6 +120,7 @@ local PARAGON_MAX_ENERGY_PER_SECOND = Knob('PARAGON_MAX_ENERGY_PER_SECOND', 1000
 local NUCLEAR_DAMAGE_MULT = Knob('NUCLEAR_DAMAGE_MULT', 6.0)
 local NUCLEAR_RADIUS_MULT = Knob('NUCLEAR_RADIUS_MULT', 3.0)
 local NUCLEAR_BUILD_RATE_MULT = Knob('NUCLEAR_BUILD_RATE_MULT', 1.5)
+local SALVAGE_RECLAIM_MULT = Knob('SALVAGE_RECLAIM_MULT', 2.0)
 
 local CommanderUpgradeModule = import('/mods/BuffDraft/lua/commander_upgrades.lua')
 local CommanderUpgradePackages = CommanderUpgradeModule.CommanderUpgradePackages
@@ -161,6 +183,16 @@ BuffBlueprint {
 }
 
 BuffBlueprint {
+    Name = 'BuffDraftNavalArmor2',
+    DisplayName = 'Naval Armor II',
+    BuffType = 'BUFFDRAFTNAVALARMOR2',
+    Stacks = 'IGNORE',
+    Duration = -1,
+    EntityCategory = 'NAVAL MOBILE',
+    Affects = { MaxHealth = { Add = 0, Mult = NAVAL_ARMOR_2_HEALTH_MULT } },
+}
+
+BuffBlueprint {
     Name = 'BuffDraftExperimentalHealth1',
     DisplayName = 'Experimental Health I',
     BuffType = 'BUFFDRAFTEXPHEALTH',
@@ -168,6 +200,19 @@ BuffBlueprint {
     Duration = -1,
     EntityCategory = 'EXPERIMENTAL',
     Affects = { MaxHealth = { Add = 0, Mult = EXPERIMENTAL_HEALTH_MULT } },
+}
+
+BuffBlueprint {
+    Name = 'BuffDraftExperimentalHealth2',
+    DisplayName = 'Experimental Health II',
+    BuffType = 'BUFFDRAFTEXPHEALTH2',
+    Stacks = 'IGNORE',
+    Duration = -1,
+    EntityCategory = 'EXPERIMENTAL',
+    Affects = {
+        MaxHealth = { Add = 0, Mult = EXPERIMENTAL_HEALTH_2_HEALTH_MULT },
+        Regen = { Add = EXPERIMENTAL_HEALTH_2_REGEN_ADD },
+    },
 }
 
 BuffBlueprint {
@@ -179,6 +224,16 @@ BuffBlueprint {
     EntityCategory = 'COMMAND',
     -- Regen mults use MaxHp as base and must be < 1 (see Buff.lua), so use a flat add
     Affects = { Regen = { Add = ACU_REGEN_ADD } },
+}
+
+BuffBlueprint {
+    Name = 'BuffDraftAcuHealth2',
+    DisplayName = 'ACU Regeneration II',
+    BuffType = 'BUFFDRAFTACUHEALTH2',
+    Stacks = 'IGNORE',
+    Duration = -1,
+    EntityCategory = 'COMMAND',
+    Affects = { MaxHealth = { Add = ACU_REGEN_2_HEALTH_ADD, Mult = 1 } },
 }
 
 BuffBlueprint {
@@ -249,13 +304,13 @@ BuffBlueprint {
 }
 
 BuffBlueprint {
-    Name = 'BuffDraftTeleportDoctrine1',
-    DisplayName = 'Teleport Doctrine',
-    BuffType = 'BUFFDRAFTTELEPORT',
+    Name = 'BuffDraftMobilityDoctrine1',
+    DisplayName = 'Mobility Doctrine',
+    BuffType = 'BUFFDRAFTMOBILITYDOCTRINE',
     Stacks = 'IGNORE',
     Duration = -1,
     EntityCategory = 'ALLUNITS',
-    Affects = { MoveMult = { Mult = TELEPORT_SPEED_MULT } },
+    Affects = { MoveMult = { Mult = MOBILITY_DOCTRINE_SPEED_MULT } },
 }
 
 BuffBlueprint {
@@ -501,12 +556,17 @@ local function WeaponDamageMult(rangeCategory, mult)
     end
 end
 
-local function WeaponRateOfFireMult(rangeCategory, mult)
+local function WeaponRateOfFireMult(rangeCategory, mult, predicate)
     return function(unit)
-        local count = ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
-            wep:ChangeRateOfFire((bp.RateOfFire or 1) * CombinedWeaponMult(unit, 'rof', i, mult))
+        local affected = 0
+        ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
+            if (not predicate) or predicate(bp) then
+                affected = affected + 1
+                wep:ChangeRateOfFire((bp.RateOfFire or 1)
+                    * CombinedWeaponMult(unit, 'rof', i, mult))
+            end
         end)
-        return count > 0
+        return affected > 0
     end
 end
 
@@ -529,6 +589,33 @@ local function WeaponDamageRadiusAdd(rangeCategory, add)
         end)
         return count > 0
     end
+end
+
+-- DamageRadiusMod is a flat delta added to the blueprint radius. Track our
+-- combined multiplier and apply only the delta from its previous value so this
+-- stacks cleanly with flat bonuses such as Napalm Rounds and can be undone.
+local function WeaponDamageRadiusMult(rangeCategory, mult, predicate)
+    return function(unit)
+        local affected = 0
+        ForEachWeapon(unit, rangeCategory, function(wep, bp, i)
+            if (not predicate) or predicate(bp) then
+                local combined = CombinedWeaponMult(unit, 'rad', i, mult)
+                local previous = combined / mult
+                wep:AddDamageRadiusMod((bp.DamageRadius or 0) * (combined - previous))
+                affected = affected + 1
+            end
+        end)
+        return affected > 0
+    end
+end
+
+local function IsCombatWeapon(bp)
+    return (not bp.DummyWeapon) and bp.WeaponCategory ~= 'Death'
+        and (bp.Damage or 0) > 0 and (bp.RateOfFire or 0) > 0
+end
+
+local function IsMissileWeapon(bp)
+    return IsCombatWeapon(bp) and bp.WeaponCategory == 'Missile'
 end
 
 -- Chain-lightning approximation: beam/laser weapons only. Every beam weapon
@@ -576,6 +663,57 @@ local function ShieldMaxHealthMult(mult)
     end
 end
 
+-- Bubble shields use Size as their diameter. This mirrors Shield.CreateShieldMesh:
+-- update the live collision sphere, the main mesh and the secondary MeshZ without
+-- changing the unit or shield blueprint. Personal shields have no protected area
+-- (damage is routed through their owner), so radius is intentionally inapplicable.
+local function ShieldRadiusMult(mult)
+    return function(unit)
+        local shield = unit.MyShield
+        if (not shield) or (not IsEntity(shield)) then
+            return false
+        end
+        if shield.ShieldType == 'Personal' then
+            LOG("FAF_BUFF_DRAFT: shield radius skipped for personal shield on " .. UnitLabel(unit))
+            return true
+        end
+        local oldSize = shield.Size
+        if (not oldSize) or oldSize <= 0 then
+            return false
+        end
+        local newSize = oldSize * mult
+        shield.Size = newSize
+        if shield:IsUp() then
+            shield:SetCollisionShape('Sphere', 0, 0, 0, newSize / 2)
+        end
+        shield:SetDrawScale(newSize)
+        if shield.MeshZ and IsEntity(shield.MeshZ) then
+            shield.MeshZ:SetDrawScale(newSize)
+        end
+        LOG("FAF_BUFF_DRAFT: shield diameter changed on " .. UnitLabel(unit)
+            .. " old=" .. tostring(oldSize) .. " new=" .. tostring(newSize))
+        return true
+    end
+end
+
+-- Overcharged shields scale regeneration with maximum health. This keeps the
+-- time required to refill a partially depleted shield unchanged while still
+-- using only the concrete shield entity (no blueprint mutation).
+local function OverchargedShieldMult(mult)
+    local healthApply = ShieldMaxHealthMult(mult)
+    return function(unit)
+        if not healthApply(unit) then
+            return false
+        end
+        local shield = unit.MyShield
+        local oldRegen = shield.RegenRate or 0
+        shield:SetShieldRegenRate(oldRegen * mult)
+        LOG("FAF_BUFF_DRAFT: shield regen changed on " .. UnitLabel(unit)
+            .. " old=" .. tostring(oldRegen) .. " new=" .. tostring(shield.RegenRate))
+        return true
+    end
+end
+
 local function RefreshProductionValuesNextTick(unit)
     local thread = ForkThread(function()
         WaitTicks(1)
@@ -598,6 +736,13 @@ end
 local BlackMarketArmies = {}
 local SalvageExplosionArmies = {}
 local NuclearApocalypseArmies = {}
+local ExperimentalDiscountArmies = {}
+local NapalmArmies = {}
+local NanoSwarmArmies = {}
+local NanoSwarmGeneration = {}
+local ChainLightningArmies = {}
+local ReclaimBonusArmies = {}
+local MissileStormArmies = {}
 local ParagonGeneration = {}
 local CommanderBuffArmies = {}
 local CommanderUpgradeState = {}
@@ -608,6 +753,173 @@ local CommanderAuraGeneration = {}
 -- re-grant bump the counter, so a remove+re-grant inside one wait interval can
 -- never leave two threads spawning for the same buff+army.
 local SpawnThreadGeneration = {}
+
+local function UnitHasRawBuff(unit, buffType, buffName)
+    return unit.Buffs and unit.Buffs.BuffTable
+        and unit.Buffs.BuffTable[buffType]
+        and unit.Buffs.BuffTable[buffType][buffName] and true or false
+end
+
+-- Called by the Unit.GetBuildCosts hook. Game.GetConstructEconomyModel still
+-- computes the normal time/cost first; only this builder's returned resource
+-- costs are scaled, so other armies and the target blueprint remain untouched.
+function GetExperimentalBuildCostMultiplier(builder, targetBlueprint)
+    if builder and ExperimentalDiscountArmies[builder.Army]
+        and targetBlueprint and targetBlueprint.CategoriesHash
+        and targetBlueprint.CategoriesHash.EXPERIMENTAL then
+        return EXP_DISCOUNT_COST_MULT
+    end
+    return 1
+end
+
+-- Called after Unit.GetReclaimCosts computed the normal per-target values.
+-- The duration remains governed by the target and the engineer's (buffed) build
+-- rate; only the mass/energy returned to this reclaimer is multiplied.
+function GetReclaimYieldMultiplier(reclaimer)
+    if reclaimer and ReclaimBonusArmies[reclaimer.Army]
+        and EntityCategoryContains(categories.ENGINEER, reclaimer) then
+        return RECLAIM_YIELD_MULT
+    end
+    return 1
+end
+
+-- Weapon hook query. The cached damage table belongs to this concrete weapon,
+-- so setting its DoT fields cannot leak to another unit or army.
+function GetNapalmDamageProfile(weapon)
+    local unit = weapon and weapon.unit
+    local bp = weapon and weapon.Blueprint
+    if (not unit) or (not bp) or (not NapalmArmies[unit.Army]) then
+        return false
+    end
+    local direct = bp.RangeCategory == 'UWRC_DirectFire'
+        and EntityCategoryContains(categories.LAND * categories.MOBILE, unit)
+    local artillery = bp.RangeCategory == 'UWRC_IndirectFire'
+        and EntityCategoryContains(categories.ARTILLERY, unit)
+    if direct or artillery then
+        return true, NAPALM_DOT_TIME, NAPALM_DOT_PULSES
+    end
+    return false
+end
+
+function GetMissileStormProjectileCount(weapon)
+    local unit = weapon and weapon.unit
+    local bp = weapon and weapon.Blueprint
+    if unit and bp and MissileStormArmies[unit.Army]
+        and EntityCategoryContains(categories.TACTICALMISSILEPLATFORM, unit)
+        and bp.WeaponCategory == 'Missile' then
+        return math.max(1, math.floor(MISSILE_STORM_PROJECTILES))
+    end
+    return 1
+end
+
+local function NanoSwarmThread(armyIndex, generation)
+    LOG("FAF_BUFF_DRAFT: nano_swarm_1 controller started army=" .. tostring(armyIndex))
+    while NanoSwarmArmies[armyIndex] and NanoSwarmGeneration[armyIndex] == generation do
+        local brain = ArmyBrains[armyIndex]
+        if not brain then
+            break
+        end
+        local now = GetGameTimeSeconds()
+        for _, unit in brain:GetListOfUnits(categories.ALLUNITS, false, false) or {} do
+            if unit and (not unit.Dead) and unit:GetFractionComplete() >= 1 then
+                local outOfCombat = now - (unit.BuffDraftLastDamageTime or -100000)
+                    >= NANO_OUT_OF_COMBAT_DELAY
+                local hasBuff = UnitHasRawBuff(unit, 'BUFFDRAFTNANOSWARM', 'BuffDraftNanoSwarm1')
+                if outOfCombat and not hasBuff then
+                    Buff.ApplyBuff(unit, 'BuffDraftNanoSwarm1')
+                elseif (not outOfCombat) and hasBuff then
+                    Buff.RemoveBuff(unit, 'BuffDraftNanoSwarm1', true)
+                end
+            end
+        end
+        WaitSeconds(1)
+    end
+    LOG("FAF_BUFF_DRAFT: nano_swarm_1 controller stopped army=" .. tostring(armyIndex))
+end
+
+local function StartNanoSwarm(armyIndex)
+    NanoSwarmArmies[armyIndex] = true
+    NanoSwarmGeneration[armyIndex] = (NanoSwarmGeneration[armyIndex] or 0) + 1
+    ForkThread(NanoSwarmThread, armyIndex, NanoSwarmGeneration[armyIndex])
+end
+
+local function StopNanoSwarm(armyIndex)
+    NanoSwarmArmies[armyIndex] = nil
+    NanoSwarmGeneration[armyIndex] = (NanoSwarmGeneration[armyIndex] or 0) + 1
+    local brain = ArmyBrains[armyIndex]
+    if brain then
+        for _, unit in brain:GetListOfUnits(categories.ALLUNITS, false, false) or {} do
+            if unit and (not unit.Dead)
+                and UnitHasRawBuff(unit, 'BUFFDRAFTNANOSWARM', 'BuffDraftNanoSwarm1') then
+                Buff.RemoveBuff(unit, 'BuffDraftNanoSwarm1', true)
+            end
+        end
+    end
+end
+
+function OnUnitDamaged(unit, amount, damageType)
+    if unit and amount and amount > 0
+        and damageType ~= 'TreeForce' and damageType ~= 'TreeFire' then
+        unit.BuffDraftLastDamageTime = GetGameTimeSeconds()
+        if UnitHasRawBuff(unit, 'BUFFDRAFTNANOSWARM', 'BuffDraftNanoSwarm1') then
+            Buff.RemoveBuff(unit, 'BuffDraftNanoSwarm1', true)
+        end
+    end
+end
+
+-- Called by the CollisionBeam hook before the primary hit is processed. It
+-- chooses secondary targets deterministically and deals a separate non-chaining
+-- damage event; no projectile or weapon blueprint needs to be replaced.
+function OnCollisionBeamDamage(beam, instigator, damageData, targetEntity)
+    local weapon = beam and beam.Weapon
+    local source = weapon and weapon.unit
+    if (not source) or source.Dead or (not ChainLightningArmies[source.Army])
+        or (not targetEntity) or (not targetEntity.IsUnit) then
+        return
+    end
+    local damage = damageData and damageData.DamageAmount or 0
+    if weapon.DamageModifiers then
+        for _, modifier in weapon.DamageModifiers do
+            damage = damage * modifier
+        end
+    end
+    damage = damage * CHAIN_ARC_DAMAGE_FRACTION
+    if damage <= 0 then
+        return
+    end
+    local pos = targetEntity:GetPosition()
+    local brain = source:GetAIBrain()
+    local candidates = {}
+    for _, candidate in brain:GetUnitsAroundPoint(
+        categories.ALLUNITS, pos, CHAIN_ARC_RADIUS, 'Enemy') or {} do
+        if candidate and (not candidate.Dead) and candidate ~= targetEntity then
+            table.insert(candidates, candidate)
+        end
+    end
+    table.sort(candidates, function(a, b)
+        return (a.EntityId or 0) < (b.EntityId or 0)
+    end)
+    local count = math.min(table.getn(candidates), math.max(0, math.floor(CHAIN_ARC_TARGETS)))
+    for i = 1, count do
+        local candidate = candidates[i]
+        Damage(instigator or source, candidate:GetPosition(), candidate, damage, 'Normal')
+    end
+end
+
+-- The kill hook records which army earned the wreckage bonus. CreateWreckage
+-- later passes the concrete prop here, where its own reclaim values can be
+-- changed without touching the dead unit's blueprint or unrelated wrecks.
+function OnWreckageCreated(victim, wreckage)
+    if (not victim) or (not victim.BuffDraftSalvageArmy) or (not wreckage)
+        or wreckage:BeenDestroyed() then
+        return
+    end
+    local mass = (wreckage.MaxMassReclaim or 0) * SALVAGE_RECLAIM_MULT
+    local energy = (wreckage.MaxEnergyReclaim or 0) * SALVAGE_RECLAIM_MULT
+    wreckage:SetMaxReclaimValues(wreckage.TimeReclaim or 1, mass, energy)
+    LOG("FAF_BUFF_DRAFT: salvage_explosion_1 enriched wreckage victim="
+        .. UnitLabel(victim) .. " mass=" .. tostring(mass) .. " energy=" .. tostring(energy))
+end
 
 local function BumpSpawnGeneration(buffId, armyIndex)
     local key = buffId .. ":" .. tostring(armyIndex)
@@ -1420,6 +1732,92 @@ local BuffSpecs = {
         category = categories.MOBILE * categories.SHIELD, when = 'built',
     } } },
 
+    -- Tier-II upgrades are separate effects, so they stack with their required
+    -- tier-I buff while the draft prerequisite remains a SIM-only eligibility rule.
+    shield_health_2 = {
+        method = "shield entity SetMaxHealth + per-instance bubble Size/collision",
+        parts = {
+            {
+                name = 'BuffDraftShieldHealth2', kind = 'custom',
+                apply = ShieldMaxHealthMult(SHIELD_HEALTH_2_HEALTH_MULT),
+                unapply = ShieldMaxHealthMult(1 / SHIELD_HEALTH_2_HEALTH_MULT),
+                requireShield = true, tracksShieldEntity = true,
+                category = categories.STRUCTURE * categories.SHIELD, when = 'built',
+            },
+            {
+                name = 'BuffDraftShieldArea2', kind = 'custom',
+                apply = ShieldRadiusMult(SHIELD_HEALTH_2_RADIUS_MULT),
+                unapply = ShieldRadiusMult(1 / SHIELD_HEALTH_2_RADIUS_MULT),
+                requireShield = true, tracksShieldEntity = true,
+                category = categories.STRUCTURE * categories.SHIELD, when = 'built',
+            },
+        },
+    },
+    tactical_range_2 = { method = "per-missile AddDamageRadiusMod", parts = { {
+        name = 'BuffDraftTacticalRadius2', kind = 'custom',
+        apply = WeaponDamageRadiusMult(nil, TACTICAL_RANGE_2_DAMAGE_RADIUS_MULT, IsMissileWeapon),
+        unapply = WeaponDamageRadiusMult(nil, 1 / TACTICAL_RANGE_2_DAMAGE_RADIUS_MULT, IsMissileWeapon),
+        category = categories.TACTICALMISSILEPLATFORM, when = 'built',
+    } } },
+    air_speed_2 = { method = "per-weapon ChangeRateOfFire", parts = { {
+        name = 'BuffDraftAirRateOfFire2', kind = 'custom',
+        apply = WeaponRateOfFireMult(nil, AIR_SPEED_2_ROF_MULT, IsCombatWeapon),
+        unapply = WeaponRateOfFireMult(nil, 1 / AIR_SPEED_2_ROF_MULT, IsCombatWeapon),
+        category = categories.AIR * categories.MOBILE, when = 'built',
+    } } },
+    acu_regen_2 = { method = "buff system flat MaxHealth", parts = { {
+        name = 'BuffDraftAcuHealth2', kind = 'buff', buffType = 'BUFFDRAFTACUHEALTH2',
+        category = categories.COMMAND, when = 'built',
+    } } },
+    artillery_range_2 = {
+        method = "per-weapon AddDamageRadiusMod + ChangeRateOfFire",
+        parts = {
+            {
+                name = 'BuffDraftArtilleryRadius2', kind = 'custom',
+                apply = WeaponDamageRadiusMult('UWRC_IndirectFire',
+                    ARTILLERY_RANGE_2_DAMAGE_RADIUS_MULT, IsCombatWeapon),
+                unapply = WeaponDamageRadiusMult('UWRC_IndirectFire',
+                    1 / ARTILLERY_RANGE_2_DAMAGE_RADIUS_MULT, IsCombatWeapon),
+                category = categories.ARTILLERY, when = 'built',
+            },
+            {
+                name = 'BuffDraftArtilleryRateOfFire2', kind = 'custom',
+                apply = WeaponRateOfFireMult('UWRC_IndirectFire',
+                    ARTILLERY_RANGE_2_ROF_MULT, IsCombatWeapon),
+                unapply = WeaponRateOfFireMult('UWRC_IndirectFire',
+                    1 / ARTILLERY_RANGE_2_ROF_MULT, IsCombatWeapon),
+                category = categories.ARTILLERY, when = 'built',
+            },
+        },
+    },
+    mobile_shields_2 = {
+        method = "shield entity SetMaxHealth + per-instance bubble Size/collision",
+        parts = {
+            {
+                name = 'BuffDraftMobileShieldHealth2', kind = 'custom',
+                apply = ShieldMaxHealthMult(MOBILE_SHIELDS_2_HEALTH_MULT),
+                unapply = ShieldMaxHealthMult(1 / MOBILE_SHIELDS_2_HEALTH_MULT),
+                requireShield = true, tracksShieldEntity = true,
+                category = categories.MOBILE * categories.SHIELD, when = 'built',
+            },
+            {
+                name = 'BuffDraftMobileShieldRadius2', kind = 'custom',
+                apply = ShieldRadiusMult(MOBILE_SHIELDS_2_RADIUS_MULT),
+                unapply = ShieldRadiusMult(1 / MOBILE_SHIELDS_2_RADIUS_MULT),
+                requireShield = true, tracksShieldEntity = true,
+                category = categories.MOBILE * categories.SHIELD, when = 'built',
+            },
+        },
+    },
+    naval_armor_2 = { method = "buff system MaxHealth", parts = { {
+        name = 'BuffDraftNavalArmor2', kind = 'buff', buffType = 'BUFFDRAFTNAVALARMOR2',
+        category = categories.NAVAL * categories.MOBILE, when = 'built',
+    } } },
+    experimentals_health_2 = { method = "buff system MaxHealth + Regen", parts = { {
+        name = 'BuffDraftExperimentalHealth2', kind = 'buff', buffType = 'BUFFDRAFTEXPHEALTH2',
+        category = categories.EXPERIMENTAL, when = 'built',
+    } } },
+
     -- new buffs
     drone_foundry_1 = {
         method = "CreateUnitHPR spawn thread (free T1 tanks at land factories)",
@@ -1455,29 +1853,33 @@ local BuffSpecs = {
         },
     },
     experimental_discount_1 = {
-        method = "OnStartBuild-conditional buff system BuildRate (experimental targets);"
-            .. " cheaper cost not implemented (blueprint economy is global)",
+        method = "Unit.GetBuildCosts per-builder resource scaling + OnStartBuild-conditional"
+            .. " buff system BuildRate (experimental targets)",
         conditionalBuild = {
             name = 'BuffDraftExpDiscount1', buffType = 'BUFFDRAFTEXPDISCOUNT',
             builderCategory = categories.ENGINEER + categories.FACTORY,
             targetCategory = categories.EXPERIMENTAL,
             active = {},
         },
+        armyApply = function(buffId, armyIndex)
+            ExperimentalDiscountArmies[armyIndex] = true
+        end,
+        armyRemove = function(buffId, armyIndex)
+            ExperimentalDiscountArmies[armyIndex] = nil
+        end,
     },
     overcharged_shields_1 = {
-        method = "shield entity SetMaxHealth; longer recharge not implemented"
-            .. " (shield spec is fixed at creation)",
+        method = "shield entity SetMaxHealth + SetShieldRegenRate",
         parts = { {
             name = 'BuffDraftOverchargedShields1', kind = 'custom',
-            apply = ShieldMaxHealthMult(OVERCHARGED_SHIELD_MULT),
-            unapply = ShieldMaxHealthMult(1 / OVERCHARGED_SHIELD_MULT),
+            apply = OverchargedShieldMult(OVERCHARGED_SHIELD_MULT),
+            unapply = OverchargedShieldMult(1 / OVERCHARGED_SHIELD_MULT),
             requireShield = true, tracksShieldEntity = true,
             category = categories.ALLUNITS, when = 'built',
         } },
     },
     napalm_rounds_1 = {
-        method = "per-weapon AddDamageRadiusMod; DoT not implemented"
-            .. " (DoTTime/DoTPulses are blueprint-only)",
+        method = "per-weapon AddDamageRadiusMod + Weapon.GetDamageTable DoT fields",
         parts = {
             {
                 name = 'BuffDraftNapalmDirect1', kind = 'custom',
@@ -1492,22 +1894,30 @@ local BuffSpecs = {
                 category = categories.ARTILLERY, when = 'built',
             },
         },
+        armyApply = function(buffId, armyIndex)
+            NapalmArmies[armyIndex] = true
+        end,
+        armyRemove = function(buffId, armyIndex)
+            NapalmArmies[armyIndex] = nil
+        end,
     },
-    teleport_doctrine_1 = {
-        method = "buff system MoveMult; teleport not implemented"
-            .. " (needs blueprint enhancement + teleport UI)",
+    mobility_doctrine_1 = {
+        method = "buff system MoveMult",
         parts = { {
-            name = 'BuffDraftTeleportDoctrine1', kind = 'buff', buffType = 'BUFFDRAFTTELEPORT',
+            name = 'BuffDraftMobilityDoctrine1', kind = 'buff',
+            buffType = 'BUFFDRAFTMOBILITYDOCTRINE',
             category = categories.ENGINEER + categories.COMMAND + categories.SUBCOMMANDER,
             when = 'built',
         } },
     },
     nano_swarm_1 = {
-        method = "buff system Regen (passive; out-of-combat detection unsafe)",
-        parts = { {
-            name = 'BuffDraftNanoSwarm1', kind = 'buff', buffType = 'BUFFDRAFTNANOSWARM',
-            category = categories.ALLUNITS, when = 'built',
-        } },
+        method = "Unit.OnDamage timestamp + one controller thread per army toggling Regen buff",
+        armyApply = function(buffId, armyIndex)
+            StartNanoSwarm(armyIndex)
+        end,
+        armyRemove = function(buffId, armyIndex)
+            StopNanoSwarm(armyIndex)
+        end,
     },
     rapid_deployment_1 = {
         method = "buff system MoveMult with Duration (new units only)",
@@ -1557,12 +1967,9 @@ local BuffSpecs = {
         end,
     },
     salvage_explosion_1 = {
-        method = "Unit.OnKilledUnit hook + DamageArea (explosion only, "
-            .. SALVAGE_EXPLOSION_CHANCE .. "% chance)",
+        method = "Unit.OnKilledUnit + DamageArea and per-wreckage SetMaxReclaimValues",
         armyApply = function(buffId, armyIndex)
             SalvageExplosionArmies[armyIndex] = true
-            LOG("FAF_BUFF_DRAFT: salvage_explosion_1 reclaim bonus skipped: wreckage"
-                .. " values come from the victim blueprint at death, no safe per-instance API")
         end,
         armyRemove = function(buffId, armyIndex)
             SalvageExplosionArmies[armyIndex] = nil
@@ -1580,41 +1987,37 @@ local BuffSpecs = {
         end,
     },
     chain_lightning_weapons_1 = {
-        method = "per-weapon ChangeDamage + AddDamageRadiusMod on beam weapons"
-            .. " (BeamLifetime blueprint marker)",
-        skipped = "skipped true chaining because arcing needs custom projectile/collision"
-            .. " scripts; approximated with x" .. CHAIN_BEAM_DAMAGE_MULT .. " damage"
-            .. " + " .. CHAIN_BEAM_RADIUS_ADD .. " splash on beam/laser weapons",
+        method = "per-weapon beam boost + CollisionBeam.DoDamage secondary-target arcs",
         parts = { {
             name = 'BuffDraftChainLightning1', kind = 'custom',
             apply = BeamWeaponBoost(CHAIN_BEAM_DAMAGE_MULT, CHAIN_BEAM_RADIUS_ADD),
             unapply = BeamWeaponBoost(1 / CHAIN_BEAM_DAMAGE_MULT, -CHAIN_BEAM_RADIUS_ADD),
             category = categories.ALLUNITS, when = 'built',
         } },
+        armyApply = function(buffId, armyIndex)
+            ChainLightningArmies[armyIndex] = true
+        end,
+        armyRemove = function(buffId, armyIndex)
+            ChainLightningArmies[armyIndex] = nil
+        end,
     },
-    -- reclaim SPEED, not yield: reclaim rate is driven by build rate, so a
-    -- conditional BuildRate buff while the reclaim command runs makes reclaiming
-    -- faster; the total amount reclaimed does not change
     reclaim_bonus_1 = {
-        method = "OnStartReclaim-conditional buff system BuildRate (x"
-            .. RECLAIM_RATE_MULT .. " reclaim speed)",
-        skipped = "skipped yield increase because reclaim value lives on props / the"
-            .. " engine reclaim command; approximated with faster reclaiming only",
+        method = "OnStartReclaim-conditional BuildRate + Unit.GetReclaimCosts yield scaling",
         conditionalReclaim = {
             name = 'BuffDraftReclaimRate1', buffType = 'BUFFDRAFTRECLAIMRATE',
             builderCategory = categories.ENGINEER,
             active = {},
         },
+        armyApply = function(buffId, armyIndex)
+            ReclaimBonusArmies[armyIndex] = true
+        end,
+        armyRemove = function(buffId, armyIndex)
+            ReclaimBonusArmies[armyIndex] = nil
+        end,
     },
-    -- approximation: true multi-missile salvos are blueprint-only (MuzzleSalvoSize),
-    -- so emulate "more missiles in the air" with faster firing + faster missile
-    -- construction. RoF goes through CombinedWeaponMult, so it stacks with the
-    -- range mults of tactical_range_1 / tactical_supremacy_1 on the same weapon.
     missile_storm_1 = {
-        method = "per-weapon ChangeRateOfFire + buff system BuildRate (missile construction)",
-        skipped = "MuzzleSalvoSize skipped: weapon blueprint data, no per-instance salvo API;"
-            .. " approximated with x" .. MISSILE_STORM_ROF_MULT .. " rate of fire"
-            .. " + x" .. MISSILE_STORM_BUILD_MULT .. " missile build rate",
+        method = "Weapon.CreateProjectileForWeapon multi-projectile shot + per-weapon"
+            .. " ChangeRateOfFire + buff system missile BuildRate",
         parts = {
             {
                 name = 'BuffDraftMissileStormRoF1', kind = 'custom',
@@ -1627,6 +2030,12 @@ local BuffSpecs = {
                 category = categories.TACTICALMISSILEPLATFORM, when = 'create',
             },
         },
+        armyApply = function(buffId, armyIndex)
+            MissileStormArmies[armyIndex] = true
+        end,
+        armyRemove = function(buffId, armyIndex)
+            MissileStormArmies[armyIndex] = nil
+        end,
     },
     tactical_supremacy_1 = {
         method = "per-weapon ChangeMaxRadius + buff system BuildRate (missile construction)",
@@ -2112,7 +2521,8 @@ end
 --- Black market bounty: killing an enemy grants a fraction of its blueprint cost
 --- (GiveResource caps at storage). Salvage explosion: chance that the killed enemy
 --- detonates - a plain DamageArea at the victim position (same call DefaultDamage /
---- EffectUtilities use); wreckage/reclaim values are untouched.
+--- EffectUtilities use). Kills also mark the victim so its later-created
+--- wreckage can be enriched through the concrete prop API.
 function OnUnitKilledUnit(killer, victim)
     if (not killer) or (not killer.Army) or (not victim) or (not victim.Army) then
         return
@@ -2134,6 +2544,10 @@ function OnUnitKilledUnit(killer, victim)
                 brain:GiveResource('ENERGY', energy)
             end
         end
+    end
+
+    if SalvageExplosionArmies[killer.Army] then
+        victim.BuffDraftSalvageArmy = killer.Army
     end
 
     if SalvageExplosionArmies[killer.Army] and Random(1, 100) <= SALVAGE_EXPLOSION_CHANCE then

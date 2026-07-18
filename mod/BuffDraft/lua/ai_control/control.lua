@@ -5,7 +5,8 @@
 -- feature uses (SimUtils.GiveUnitsToPlayer), so veterancy/upgrades/silo ammo
 -- survive and no blueprint or army state is touched by hand.
 --
--- The UI sends ONLY an entity id; everything is validated here sim-side:
+-- The UI sends an entity id plus optional stale-id/click guards; everything is
+-- validated here sim-side:
 -- sender is the configured owner (nickname re-checked against the brain),
 -- source entities belong to allied non-civilian AI armies and may be land,
 -- naval, air or structures (never Mark - he is an enemy and fails IsAlly; never
@@ -18,6 +19,7 @@
 -- folder + EnableAIControl = false removes it (the callback and button bail out).
 
 local BuffDraftConfig = import('/mods/BuffDraft/lua/config.lua')
+local AdminAccess = import('/mods/BuffDraft/lua/admin_access.lua')
 
 local function Knob(name, default)
     local value = BuffDraftConfig[name]
@@ -30,12 +32,22 @@ end
 local EnableAIControl = Knob('EnableAIControl', false)
 local AllowACU = Knob('AIControlAllowACU', false)
 local IncludeExperimentals = Knob('AIControlIncludeExperimentals', false)
-local OwnerNickname = Knob('AdminOwnerNickname', "")
 local TransferableCat = categories.ALLUNITS - categories.INSIGNIFICANTUNIT
 
 local function UnitLabel(unit)
     return string.format("%s#%s", tostring(unit:GetBlueprint().BlueprintId),
         tostring(unit:GetEntityId()))
+end
+
+local function SyncResult(senderArmy, success, reason, unitLabel)
+    Sync.BuffDraft = Sync.BuffDraft or {}
+    table.insert(Sync.BuffDraft, {
+        event = 'ai_control_result',
+        army = senderArmy,
+        success = success and true or false,
+        reason = reason,
+        unit = unitLabel,
+    })
 end
 
 -- UI payload is raw: validate the id, then resolve to the current sim entity.
@@ -61,10 +73,28 @@ local function ResolveTarget(data)
         or not target.GetFractionComplete or not target.IsUnitState then
         return nil, 'not_unit'
     end
-    if type(data.blueprintId) == 'string' then
+    if type(data.blueprintId) == 'string' and data.blueprintId ~= ''
+            and data.blueprintId ~= 'unknown' then
         local bp = target:GetBlueprint()
         if (not bp) or bp.BlueprintId ~= data.blueprintId then
             return nil, 'entity_mismatch'
+        end
+    end
+    -- A cached rollover is used only for the one-frame UI race at click time.
+    -- Verify that its unit is still under/next to the click so a stale hover can
+    -- never transfer a different unit after the player clicks empty ground.
+    if data.cachedRollover and type(data.clickPosition) == 'table' then
+        local click = data.clickPosition
+        if type(click[1]) ~= 'number' or type(click[3]) ~= 'number' then
+            return nil, 'bad_click_position'
+        end
+        local targetPos = target:GetPosition()
+        local bp = target:GetBlueprint()
+        local allowed = math.max(4, math.max(bp.SizeX or 1, bp.SizeZ or 1) * 1.5)
+        local dx = targetPos[1] - click[1]
+        local dz = targetPos[3] - click[3]
+        if dx * dx + dz * dz > allowed * allowed then
+            return nil, 'stale_rollover'
         end
     end
     return target, nil
@@ -111,16 +141,20 @@ end
 function TakeAIUnitsAtPoint(senderArmy, data)
     if not EnableAIControl then
         LOG("FAF_BUFF_DRAFT_AI_CONTROL: disabled by config")
+        SyncResult(senderArmy, false, 'disabled')
         return
     end
     local senderBrain = ArmyBrains[senderArmy]
     if not senderBrain or senderBrain.BrainType ~= 'Human' or senderBrain.Civilian then
         LOG("FAF_BUFF_DRAFT_AI_CONTROL: request rejected army=" .. tostring(senderArmy) .. " reason=not_human")
+        SyncResult(senderArmy, false, 'not_human')
         return
     end
-    if OwnerNickname ~= "" and senderBrain.Nickname ~= OwnerNickname then
+    if not AdminAccess.IsNicknameAllowed(senderBrain.Nickname) then
         LOG("FAF_BUFF_DRAFT_AI_CONTROL: request rejected army=" .. tostring(senderArmy)
-            .. " nickname=" .. tostring(senderBrain.Nickname) .. " reason=not_owner")
+            .. " nickname=" .. tostring(senderBrain.Nickname) .. " reason=not_owner owners="
+            .. AdminAccess.ConfiguredOwnersText())
+        SyncResult(senderArmy, false, 'not_owner', tostring(senderBrain.Nickname))
         return
     end
 
@@ -129,17 +163,20 @@ function TakeAIUnitsAtPoint(senderArmy, data)
         LOG("FAF_BUFF_DRAFT_AI_CONTROL: request rejected army=" .. tostring(senderArmy)
             .. " reason=" .. tostring(resolveReason)
             .. " entity=" .. tostring(data and data.entityId))
+        SyncResult(senderArmy, false, resolveReason)
         return
     end
 
     if target.Dead then
         LOG("FAF_BUFF_DRAFT_AI_CONTROL: request skipped unit="
             .. tostring(data.entityId) .. " reason=dead")
+        SyncResult(senderArmy, false, 'dead')
         return
     end
 
     if target.Army == senderArmy then
         LOG("FAF_BUFF_DRAFT_AI_CONTROL: request skipped own unit=" .. UnitLabel(target))
+        SyncResult(senderArmy, false, 'own_unit', UnitLabel(target))
         return
     end
 
@@ -147,6 +184,7 @@ function TakeAIUnitsAtPoint(senderArmy, data)
     if reason then
         LOG(string.format("FAF_BUFF_DRAFT_AI_CONTROL: request skipped unit=%s reason=%s",
             UnitLabel(target), reason))
+        SyncResult(senderArmy, false, reason, UnitLabel(target))
         return
     end
 
@@ -160,5 +198,8 @@ function TakeAIUnitsAtPoint(senderArmy, data)
         senderArmy, 1, got))
     if got < 1 then
         WARN("FAF_BUFF_DRAFT_AI_CONTROL: transfer filtered target unit (see SimUtils.TransferUnitsOwnership restrictions)")
+        SyncResult(senderArmy, false, 'transfer_filtered')
+    else
+        SyncResult(senderArmy, true, 'transferred', UnitLabel(newUnits[1]))
     end
 end

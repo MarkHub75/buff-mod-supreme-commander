@@ -1,513 +1,341 @@
-WARNING: Error running OnAdjacentTo script in Entity ueb0301 at 8fa0ae08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
-         stack traceback:
-         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
-WARNING: Error running OnAdjacentTo script in Entity ueb0301 at 8fa0ae08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
-         stack traceback:
-         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
-WARNING: Error running OnNotAdjacentTo script in Entity ueb0201 at 2dc94c08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(824): table index is nil
-         stack traceback:
-         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(824): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:816>
-WARNING: Error running OnNotAdjacentTo script in Entity ueb0201 at 2dc94c08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(824): table index is nil
-         stack traceback:
-         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(824): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:816>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Error running OnAdjacentTo script in Entity ueb1301 at 87180508: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
-         stack traceback:
-         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
-WARNING: Error running OnAdjacentTo script in Entity ueb1301 at 87180508: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
-         stack traceback:
-         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
-WARNING: Error running OnAdjacentTo script in Entity ueb1301 at a817f908: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
-         stack traceback:
-         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
+WARNING: Duplicate definition of console command ""
+WARNING: Search path element "C:\Users\Артём\AppData\Local\Gas Powered Games\Supreme Commander Forged Alliance" does not match any files
+WARNING: Blueprints.lua - Preferences file is not found. Skipping pre game data.
+WARNING: Blueprints.lua - Preferences file is not found. Skipping pre game data.
+WARNING:  NUM PROPS = 12597
+WARNING: GetResource: Invalid name ""
+WARNING: GetResource: Invalid name ""
+WARNING: GetResource: Invalid name ""
 WARNING: ACU kill detected. Time requirement for rating games will now be removed.
-WARNING: *AI WARNING: HaveUnitComparisonAtLocation - Invalid location - MAIN
-WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
-         stack traceback:
-         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
-         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1211): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1210>
-         	(tail call): ?
-         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
-         	(tail call): ?
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
-         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
-WARNING: Error running lua script: ...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): attempt to call method `GetLocationCoords' (a nil value)
-         stack traceback:
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:1518>
-WARNING: Error running OnDamage script in Entity  at 7c14ae00: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
-         stack traceback:
-         	[C]: ?
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
-         	[C]: ?
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
-WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
-         stack traceback:
-         	[C]: ?
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
-         	[C]: ?
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
-WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
-         stack traceback:
-         	[C]: ?
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
-         	[C]: ?
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
-WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
-         stack traceback:
-         	[C]: ?
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
-         	[C]: ?
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
-WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
-         stack traceback:
-         	[C]: ?
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
-         	[C]: ?
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
-WARNING: Error running OnDamage script in Entity  at 9ee0e500: ...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): Expected a game object. (Did you call with '.' instead of ':'?)
-         stack traceback:
-         	[C]: ?
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(606): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(655): in function `ApplyDamage'
-         	...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua(520): in function <...rogramdata\faforever\gamedata\lua.nx2\lua\shield.lua:511>
-         	[C]: ?
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(703): in function `DoDamage'
-         	...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua(387): in function <...ta\faforever\gamedata\lua.nx2\lua\sim\projectile.lua:321>
+WARNING: false	M28Warning: Count=1: GameTime 128: Unable to find build location, iActionToAssign=1; P349Z9; sBlueprint=uab1103
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10449): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(12340): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(13008): in function `ConsiderCoreBaseLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20431): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
 WARNING: ACU kill detected. Time requirement for rating games will now be removed.
-WARNING: *AI WARNING: FactoryComparisonAtLocation - Invalid location - Large Expansion Area 8
-WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
+WARNING: false	M28Warning: Count=1: GameTime 289: Are trying to send reclaim order with min threshold below the amount in the zone so the engineer will likely end up wasting time on lower value reclaim
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6227): in function `TryToGetReclaimForSegmentOrAroundEngineer'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6395): in function `GetEngineerToReclaimNearbyArea'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10674): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(19115): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(19263): in function `ConsiderWaterZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20429): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28navy.lua(2292): in function <...mander forged alliance\mods\m28ai\lua\ai\m28navy.lua:1785>
+WARNING: false	M28Warning: Count=2: GameTime 353: Are trying to send reclaim order with min threshold below the amount in the zone so the engineer will likely end up wasting time on lower value reclaim
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6227): in function `TryToGetReclaimForSegmentOrAroundEngineer'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6395): in function `GetEngineerToReclaimNearbyArea'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10674): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(19115): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(19263): in function `ConsiderWaterZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20429): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28navy.lua(2292): in function <...mander forged alliance\mods\m28ai\lua\ai\m28navy.lua:1785>
+WARNING: false	M28Warning: Count=1: GameTime 675: Couldnt find anything to reclaim but we have refreshed the zone in the last second, mass value post refresh was less than pre refresh, see log for more info
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6432): in function `GetEngineerToReclaimNearbyArea'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10674): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(16699): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(18690): in function `ConsiderMinorLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20434): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: false	M28Warning: Count=2: GameTime 678: Couldnt find anything to reclaim but we have refreshed the zone in the last second, mass value post refresh was less than pre refresh, see log for more info
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6432): in function `GetEngineerToReclaimNearbyArea'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10674): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(16699): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(18690): in function `ConsiderMinorLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20434): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: Error running OnRelease script in <deleted object>: ...mdata\faforever\gamedata\lua.nx2\lua\maui\button.lua(119): Game object has been destroyed
          stack traceback:
-         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
-         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1211): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1210>
-         	(tail call): ?
-         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
-         	(tail call): ?
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
-         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
-WARNING: *AI WARNING: FactoryComparisonAtLocation - Invalid location - Expansion Area 9
-WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
+         	[C]: in function `Play'
+         	...mdata\faforever\gamedata\lua.nx2\lua\maui\button.lua(119): in function <...mdata\faforever\gamedata\lua.nx2\lua\maui\button.lua:112>
+WARNING: false	M28Warning: Count=16: GameTime 784: Couldnt find anything to reclaim but we have refreshed the zone in the last second, mass value post refresh was less than pre refresh, see log for more info
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6432): in function `GetEngineerToReclaimNearbyArea'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10674): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(16699): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(18690): in function `ConsiderMinorLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20434): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
-         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1211): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1210>
-         	(tail call): ?
-         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
-         	(tail call): ?
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
-         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
-WARNING: *AI WARNING: EngineerComparisonAtLocation - Invalid location - MAIN
-WARNING: *AI WARNING: FactoryCapCheck - Invalid location - MAIN
-WARNING: *AI WARNING: HaveUnitComparisonAtLocation - Invalid location - MAIN
-WARNING: *AI WARNING: HaveUnitComparisonAtLocation - Invalid location - MAIN
-WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
-         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1196): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1195>
-         	(tail call): ?
-         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
-         	(tail call): ?
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
-         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
-WARNING: Error running lua script: ...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): attempt to call method `GetLocationCoords' (a nil value)
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:1518>
-WARNING: ACU kill detected. Time requirement for rating games will now be removed.
-WARNING: *AI WARNING: LocationBuildingComparison - Invalid location - MAIN
-WARNING: *AI WARNING: LocationEngineersBuildingComparison - Invalid location - MAIN
-WARNING: *AI WARNING: LocationEngineersBuildingComparison - Invalid location - MAIN
-WARNING: *AI WARNING: FactoryCapCheck - Invalid location - MAIN
-WARNING: *AI WARNING: LocationEngineersBuildingAssistanceComparison - Invalid location - MAIN
-WARNING: *AI WARNING: HaveUnitComparisonAtLocation - Invalid location - MAIN
-WARNING: *AI WARNING: FactoryCapCheck - Invalid location - MAIN
-WARNING: Error running lua script: ...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): attempt to call method `GetNumCategoryUnits' (a nil value)
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	...\faforever\gamedata\lua.nx2\lua\aibrains\tech-ai.lua(498): in function `GetManagerCount'
-         	...data\lua.nx2\lua\editor\unitcountbuildconditions.lua(1196): in function <...data\lua.nx2\lua\editor\unitcountbuildconditions.lua:1195>
-         	(tail call): ?
-         	...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua(396): in function <...\gamedata\lua.nx2\lua\sim\brainconditionsmonitor.lua:394>
-         	(tail call): ?
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(214): in function `BuilderConditionTest'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(256): in function `CheckBuilderConditions'
-         	...mdata\faforever\gamedata\lua.nx2\lua\sim\builder.lua(152): in function `GetBuilderStatus'
-         	...aforever\gamedata\lua.nx2\lua\sim\buildermanager.lua(212): in function `GetHighestBuilder'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(769): in function `AssignEngineerTask'
-         	...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua(736): in function <...forever\gamedata\lua.nx2\lua\sim\engineermanager.lua:733>
-WARNING: Error running lua script: ...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): attempt to call method `GetLocationCoords' (a nil value)
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(1528): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:1518>
-WARNING: Error running lua script: number expected but got nil
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: false	M28Warning: Count=1: GameTime 1216: oFactory has waited more than 200 ticks and still isnt showing as ready to build, oFactory=zab96031; brain nickname=Gerard (AIx: M28 Turtle); Work progress=0; Factory fraction complete=1; Factory status=Busy; Is command queue empty=false; iWorkProgressStart=0
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...der forged alliance\mods\m28ai\lua\ai\m28factory.lua(4754): in function <...der forged alliance\mods\m28ai\lua\ai\m28factory.lua:4696>
+WARNING: false	M28Warning: Count=1: GameTime 1221: We are unable to build at a predefined shield location, will check for small blocking M28 buildings and destroy them
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6713): in function `ConstructNewShield'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6832): in function <...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua:6468>
+WARNING: false	M28Warning: Count=2: GameTime 1304: We are unable to build at a predefined shield location, will check for small blocking M28 buildings and destroy them
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6713): in function `ConstructNewShield'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6832): in function <...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua:6468>
+WARNING: false	M28Warning: Count=16: GameTime 1305: We are unable to build at a predefined shield location, will check for small blocking M28 buildings and destroy them
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6713): in function `ConstructNewShield'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6832): in function <...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua:6468>
+WARNING: false	M28Warning: Count=80: GameTime 1312: We are unable to build at a predefined shield location, will check for small blocking M28 buildings and destroy them
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6713): in function `ConstructNewShield'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6832): in function <...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua:6468>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `VDist2Sq'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
-WARNING: Error running lua script: number expected but got nil
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: false	M28Warning: Count=400: GameTime 1344: We are unable to build at a predefined shield location, will check for small blocking M28 buildings and destroy them
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6713): in function `ConstructNewShield'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6832): in function <...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua:6468>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `VDist2Sq'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
-WARNING: Error running lua script: number expected but got nil
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `VDist2Sq'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
-WARNING: Error running lua script: number expected but got nil
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: false	M28ERROR Count=1: GameTime 1479: No other land or water zones identified, likely error
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...mmander forged alliance\mods\m28ai\lua\ai\m28air.lua(5437): in function <...mmander forged alliance\mods\m28ai\lua\ai\m28air.lua:4132>
+WARNING: false	M28ERROR Count=2: GameTime 1484: No other land or water zones identified, likely error
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...mmander forged alliance\mods\m28ai\lua\ai\m28air.lua(5437): in function <...mmander forged alliance\mods\m28ai\lua\ai\m28air.lua:4132>
+WARNING: false	M28Warning: Count=2000: GameTime 1504: We are unable to build at a predefined shield location, will check for small blocking M28 buildings and destroy them
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6713): in function `ConstructNewShield'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6832): in function <...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua:6468>
+WARNING: false	M28Warning: Count=80: GameTime 1563: Couldnt find anything to reclaim but we have refreshed the zone in the last second, mass value post refresh was less than pre refresh, see log for more info
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6432): in function `GetEngineerToReclaimNearbyArea'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10674): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(16699): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(18690): in function `ConsiderMinorLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20434): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `VDist2Sq'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
-WARNING: Error running lua script: number expected but got nil
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: false	M28ERROR Count=1: GameTime 1576: Trying to assist upgrade but there are none for this LZ
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10629): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(12340): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(13377): in function `ConsiderCoreBaseLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20431): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: false	M28ERROR Count=2: GameTime 1577: Trying to assist upgrade but there are none for this LZ
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10629): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(12340): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(13377): in function `ConsiderCoreBaseLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20431): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: false	M28ERROR Count=16: GameTime 1591: Trying to assist upgrade but there are none for this LZ
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10629): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(12340): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(13377): in function `ConsiderCoreBaseLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20431): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `VDist2Sq'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
-WARNING: Error running lua script: number expected but got nil
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: false	M28Warning: Count=3: GameTime 1599: Are trying to send reclaim order with min threshold below the amount in the zone so the engineer will likely end up wasting time on lower value reclaim
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6227): in function `TryToGetReclaimForSegmentOrAroundEngineer'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6395): in function `GetEngineerToReclaimNearbyArea'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10674): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(19115): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(19263): in function `ConsiderWaterZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20429): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28navy.lua(2292): in function <...mander forged alliance\mods\m28ai\lua\ai\m28navy.lua:1785>
+WARNING: false	M28Warning: Count=1: GameTime 1671: Tempalte location cant be built on but has no units in it
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(7925): in function `ConsiderUnitsToReclaim'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(8039): in function `GETemplateStartBuildingShield'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(8764): in function <...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua:8512>
+WARNING: false	M28Warning: Count=2: GameTime 1671: Tempalte location cant be built on but has no units in it
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(7925): in function `ConsiderUnitsToReclaim'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(8039): in function `GETemplateStartBuildingShield'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(8764): in function <...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua:8512>
+WARNING: false	M28Warning: Count=16: GameTime 1674: Tempalte location cant be built on but has no units in it
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(7925): in function `ConsiderUnitsToReclaim'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(8044): in function `GETemplateStartBuildingShield'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(8764): in function <...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua:8512>
+WARNING: false	M28Warning: Count=4: GameTime 1712: Are trying to send reclaim order with min threshold below the amount in the zone so the engineer will likely end up wasting time on lower value reclaim
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6227): in function `TryToGetReclaimForSegmentOrAroundEngineer'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6395): in function `GetEngineerToReclaimNearbyArea'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10674): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(12340): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(12857): in function `ConsiderCoreBaseLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20431): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `VDist2Sq'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
-WARNING: Error running lua script: number expected but got nil
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: false	M28ERROR Count=16: GameTime 1768: No other land or water zones identified, likely error
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...mmander forged alliance\mods\m28ai\lua\ai\m28air.lua(5437): in function <...mmander forged alliance\mods\m28ai\lua\ai\m28air.lua:4132>
+WARNING: false	M28Warning: Count=1: GameTime 1769: oFactory has waited more than 200 ticks and still isnt showing as ready to build, oFactory=uab03041; brain nickname=Sletir (AIx: M28 Tech); Work progress=0; Factory fraction complete=1; Factory status=; Is command queue empty=true; iWorkProgressStart=0
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...der forged alliance\mods\m28ai\lua\ai\m28factory.lua(4754): in function <...der forged alliance\mods\m28ai\lua\ai\m28factory.lua:4696>
+WARNING: false	M28Warning: Count=5: GameTime 1786: Are trying to send reclaim order with min threshold below the amount in the zone so the engineer will likely end up wasting time on lower value reclaim
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6227): in function `TryToGetReclaimForSegmentOrAroundEngineer'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(6395): in function `GetEngineerToReclaimNearbyArea'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10674): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(19115): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(19263): in function `ConsiderWaterZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20429): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28navy.lua(2292): in function <...mander forged alliance\mods\m28ai\lua\ai\m28navy.lua:1785>
+WARNING: false	M28Warning: Count=1: GameTime 1813: Unable to find build location, iActionToAssign=21; P349Z10; sBlueprint=uaa0310
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10449): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(12340): in function `fnHaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(12060): in function `AssignBuildExperimentalOrT3NavyAction'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(15998): in function `ConsiderCoreBaseLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20431): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: false	M28Warning: Count=2: GameTime 1836: oFactory has waited more than 200 ticks and still isnt showing as ready to build, oFactory=uab03041; brain nickname=Sletir (AIx: M28 Tech); Work progress=0; Factory fraction complete=1; Factory status=; Is command queue empty=true; iWorkProgressStart=0
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...der forged alliance\mods\m28ai\lua\ai\m28factory.lua(4754): in function <...der forged alliance\mods\m28ai\lua\ai\m28factory.lua:4696>
+WARNING: false	M28ERROR Count=64: GameTime 1852: Trying to assist upgrade but there are none for this LZ
+WARNING: stack traceback:
+WARNING:         [C]: in function `assert'
+WARNING:         [C]: in function `pcall'
+WARNING:         ...r forged alliance\mods\m28ai\lua\ai\m28utilities.lua(285): in function `ErrorHandler'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(10629): in function `ConsiderActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(12340): in function `HaveActionToAssign'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(13377): in function `ConsiderCoreBaseLandZoneEngineerAssignment'
+WARNING:         ...er forged alliance\mods\m28ai\lua\ai\m28engineer.lua(20431): in function `?'
+WARNING:         ...mander forged alliance\mods\m28ai\lua\ai\m28land.lua(12537): in function <...mander forged alliance\mods\m28ai\lua\ai\m28land.lua:11696>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `VDist2Sq'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua(3337): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\platoon.lua:3310>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>
+WARNING: Error running lua script: Unit:GetCargo only valid for transport units
          stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Error running lua script: Failed to attach entity xra0105 to /projectiles/sinker/sinker_proj.bp on bone 1
-         stack traceback:
-         	[C]: in function `AttachBoneTo'
-         	...projectiles.nx2\projectiles\sinker\sinker_script.lua(56): in function `StartSinking'
-         	...projectiles.nx2\projectiles\sinker\sinker_script.lua(35): in function <...projectiles.nx2\projectiles\sinker\sinker_script.lua:33>
-WARNING: defaultunits.lua OnImpact: did not find a deathWep on the plane! Is the weapon defined in the blueprint? xra0105
-WARNING: Error running OnImpact script in Entity xra0105 at 930fc308: ...faforever\gamedata\lua.nx2\lua\sim\units\airunit.lua(126): attempt to call method `Destroy' (a nil value)
-         stack traceback:
-         	...faforever\gamedata\lua.nx2\lua\sim\units\airunit.lua(126): in function <...faforever\gamedata\lua.nx2\lua\sim\units\airunit.lua:105>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: *AI DEBUG Alexandra (ИИx: технологический) Mass Hunter Mid Game Load and Transport 82623 Transport 4194596 ABORTING LOAD - watchcount 210.6003112793
-WARNING: Error running OnAdjacentTo script in Entity ueb1105 at a314ba08: ...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): table index is nil
-         stack traceback:
-         	...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua(785): in function <...ver\gamedata\lua.nx2\lua\sim\units\structureunit.lua:774>
-         	[C]: in function `CreateUnitHPR'
-         	...faforever\gamedata\lua.nx2\lua\defaultcomponents.lua(895): in function `OnStopBeingBuilt'
-         	...\gamedata\units.nx2\units\uel0401\uel0401_script.lua(83): in function <...\gamedata\units.nx2\units\uel0401\uel0401_script.lua:81>
-WARNING: Error running lua script: ...rever\gamedata\lua.nx2\lua\ai\transportutilities.lua(2106): attempt to concatenate field `BuilderName' (a nil value)
-         stack traceback:
-         	...rever\gamedata\lua.nx2\lua\ai\transportutilities.lua(2106): in function <...rever\gamedata\lua.nx2\lua\ai\transportutilities.lua:2054>
-WARNING: Evaluating LazyVar failed: error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): error evaluating lazy variable: ...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): circular dependency in lazy evaluation for variable [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(53): in function `Right'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(240): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:240>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function `Left'
-         	...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua(254): in function <...aforever\gamedata\lua.nx2\lua\maui\layouthelpers.lua:254>
-         	[C]: ?
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(72): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-         Stack trace from definition: [Set lazyvar.ExtendedErrorMessages for extra trace info]
-         
-         stack traceback:
-         	[C]: in function `error'
-         	...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua(86): in function <...ogramdata\faforever\gamedata\lua.nx2\lua\lazyvar.lua:41>
-WARNING: Connection dialogue opening due to disconnection by players:
+         	[C]: in function `GetCargo'
+         	...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua(3397): in function <...ander forged alliance\mods\m28ai\lua\ai\m28micro.lua:3395>

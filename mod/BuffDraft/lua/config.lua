@@ -7,14 +7,16 @@
 -- admin callbacks.
 DebugAdmin = true
 
--- Only the player with this nickname may see/open the admin panel and use the
--- admin callbacks. UI checks GetArmiesTable().armiesTable[focus].nickname; the
--- sim independently checks ArmyBrains[senderArmy].Nickname, so a modified UI
--- cannot bypass it. Empty string = no nickname restriction (DebugAdmin only).
-AdminOwnerNickname = "Mnogoruchka"
+-- Only players with one of these exact nicknames may see/open the admin panel
+-- and use its callbacks. UI and SIM both use lua/admin_access.lua, so a modified
+-- UI cannot bypass this gate. Empty table = no nickname restriction.
+AdminOwnerNicknames = {
+    "Mnogoruchka",
+    "Mnogonozhka",
+}
 
 -- AI unit transfer tool (lua/ai_control/): "Take AI" button in the admin panel
--- for the AdminOwnerNickname player - click any allied AI unit/structure (land,
+-- for an AdminOwnerNicknames player - click any allied AI unit/structure (land,
 -- naval, air, or building), and that exact entity transfers to the player
 -- (stock SimUtils.TransferUnitsOwnership).
 -- The sim re-validates everything; deleting lua/ai_control/ + false here
@@ -33,6 +35,7 @@ AIControlIncludeExperimentals = true -- land/naval/air experimentals can be take
 -- draft pacing
 DraftIntervalSeconds = 300 -- one draft per 5 min
 OptionsPerTick = 3 -- buffs offered per draft choice
+Tier2DraftWeight = 3 -- eligible tier-II buff weight relative to another buff of the same rarity
 
 -- AI pressure director (part 2, survey scaffold). Logs-only for now: after
 -- AIDirectorStartSeconds of game time a sim thread logs what each AI army on
@@ -98,12 +101,31 @@ ARTILLERY_RANGE_MULT = 1.5
 TACTICAL_RANGE_MULT = 2.0
 SHIELD_HEALTH_MULT = 2.0
 MOBILE_SHIELD_HEALTH_MULT = 2.0
+
+-- tier-II upgrades (applied in addition to their required tier-I buff)
+SHIELD_HEALTH_2_HEALTH_MULT = 1.5
+SHIELD_HEALTH_2_AREA_MULT = 1.4 -- area multiplier; SIM converts it to sqrt(area) radius
+TACTICAL_RANGE_2_DAMAGE_RADIUS_MULT = 3.0
+AIR_SPEED_2_ROF_MULT = 2.0
+ACU_REGEN_2_HEALTH_ADD = 5000
+ARTILLERY_RANGE_2_DAMAGE_RADIUS_MULT = 2.0
+ARTILLERY_RANGE_2_ROF_MULT = 1.4
+MOBILE_SHIELDS_2_HEALTH_MULT = 3.0 -- +200% means 3x the pre-upgrade value
+MOBILE_SHIELDS_2_RADIUS_MULT = 1.3
+NAVAL_ARMOR_2_HEALTH_MULT = 3.0
+EXPERIMENTAL_HEALTH_2_HEALTH_MULT = 2.0
+EXPERIMENTAL_HEALTH_2_REGEN_ADD = 15
+
 EMERGENCY_FAB_BUILD_MULT = 3.0 -- while building defenses
 OVERCHARGED_SHIELD_MULT = 2.5
 NAPALM_RADIUS_ADD = 1.0 -- flat damage-radius add, world units
-TELEPORT_SPEED_MULT = 2.0 -- ACU/SCU/engineers
+NAPALM_DOT_TIME = 3 -- seconds
+NAPALM_DOT_PULSES = 3 -- includes the initial impact pulse
+MOBILITY_DOCTRINE_SPEED_MULT = 2.0 -- ACU/SCU/engineers
 NANO_REGEN_ADD = 5 -- flat hp/s, all units
+NANO_OUT_OF_COMBAT_DELAY = 10 -- seconds since last damage
 EXP_DISCOUNT_BUILD_MULT = 2.5 -- while building experimentals
+EXP_DISCOUNT_COST_MULT = 0.5 -- mass and energy cost of experimentals
 RAPID_SPEED_MULT = 2.0
 RAPID_DURATION = 60 -- seconds of bonus speed on newly built mobiles
 FORTRESS_HP_MULT = 3.0
@@ -115,11 +137,16 @@ BLACK_MARKET_MASS_FRACTION = 0.1 -- of victim cost per kill
 BLACK_MARKET_ENERGY_FRACTION = 0.1
 CHAIN_BEAM_DAMAGE_MULT = 1.5
 CHAIN_BEAM_RADIUS_ADD = 1.5
+CHAIN_ARC_RADIUS = 12 -- world units around the primary beam target
+CHAIN_ARC_TARGETS = 2
+CHAIN_ARC_DAMAGE_FRACTION = 0.5 -- of the beam tick damage per secondary target
 RECLAIM_RATE_MULT = 2.0 -- while reclaiming
+RECLAIM_YIELD_MULT = 2.0
 TAC_SUPREMACY_RANGE_MULT = 3.0
 TAC_SUPREMACY_BUILD_MULT = 2.0
 MISSILE_STORM_ROF_MULT = 2.5
 MISSILE_STORM_BUILD_MULT = 2.5
+MISSILE_STORM_PROJECTILES = 3 -- projectiles created for each launcher shot
 AIR_SUP_SPEED_MULT = 2.0
 AIR_SUP_DAMAGE_MULT = 1.5
 AIR_SUP_HP_MULT = 0.75 -- armor cost, < 1
@@ -147,6 +174,7 @@ ENGINEER_SWARM_MAX_PER_WAVE = 2
 SALVAGE_EXPLOSION_CHANCE = 25 -- percent per enemy kill
 SALVAGE_EXPLOSION_RADIUS = 3
 SALVAGE_EXPLOSION_DAMAGE = 150
+SALVAGE_RECLAIM_MULT = 2.0 -- mass and energy stored in generated wreckage
 
 -- orbital lance (active)
 ORBITAL_LANCE_COOLDOWN = 90 -- game seconds

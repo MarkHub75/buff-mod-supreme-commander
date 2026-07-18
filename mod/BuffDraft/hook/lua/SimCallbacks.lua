@@ -6,6 +6,10 @@ Callbacks.BuffDraftPick = function(data, units)
     import('/mods/BuffDraft/lua/draft.lua').ReceivePick(data)
 end
 
+Callbacks.BuffDraftReroll = function(data, units)
+    import('/mods/BuffDraft/lua/draft.lua').ReceiveReroll(data)
+end
+
 -- Debug admin panel (gated by DebugAdmin in /mods/BuffDraft/lua/config.lua; the
 -- sim re-validates the flag and everything else in draft.lua - the UI is input only).
 Callbacks.BuffDraftAdminGrantBuff = function(data, units)

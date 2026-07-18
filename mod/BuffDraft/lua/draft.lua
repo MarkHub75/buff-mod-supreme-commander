@@ -2,9 +2,10 @@
 -- tick rolls options for both sides; human sides get a pending choice added to their
 -- queue (no auto-pick, no timeout) and pick whenever they press Choose in the UI.
 -- AI-only sides still auto-pick the first option immediately. All rules are
--- validated sim-side; the UI only displays queue state and sends picks back.
+-- validated sim-side; the UI only displays queue state and sends picks/rerolls.
 
 local BuffCatalog = import('/mods/BuffDraft/lua/buffs.lua').BuffCatalog
+local AdminAccess = import('/mods/BuffDraft/lua/admin_access.lua')
 
 -- knobs from config.lua; nil-safe fallbacks keep the historical defaults
 local BuffDraftConfig = import('/mods/BuffDraft/lua/config.lua')
@@ -42,6 +43,12 @@ local PendingChoices = {
     Artem = {},
 }
 
+-- One rarity-neutral reroll per human side for the whole sim session.
+local RerollUsed = {
+    Mark = false,
+    Artem = false,
+}
+
 local function IsPicked(sideName, id)
     for _, pickedId in PickedHistory[sideName] do
         if pickedId == id then
@@ -53,11 +60,13 @@ end
 
 -- Buff ids currently offered in any pending choice of this side, so the same buff
 -- cannot be rolled into two queued choices at once.
-local function PendingBuffIds(sideName)
+local function PendingBuffIds(sideName, ignoredChoice)
     local ids = {}
     for _, choice in PendingChoices[sideName] do
-        for _, option in choice.options do
-            table.insert(ids, option.id)
+        if choice ~= ignoredChoice then
+            for _, option in choice.options do
+                table.insert(ids, option.id)
+            end
         end
     end
     return ids
@@ -72,14 +81,18 @@ local function ListContains(list, id)
     return false
 end
 
--- Buffs this side can still roll: not in its picked history and not sitting in any
--- of its pending choices. A buff picked by one side can still roll for the other.
+-- Buffs this side can still roll: prerequisite already picked, not in its picked
+-- history and not sitting in any pending choice. A buff picked by one side can
+-- still roll for the other.
 -- Returns the available list plus the pending id list (for logging).
-local function AvailableBuffs(sideName)
-    local pendingIds = PendingBuffIds(sideName)
+local function AvailableBuffs(sideName, ignoredChoice)
+    local pendingIds = PendingBuffIds(sideName, ignoredChoice)
     local available = {}
     for _, buff in BuffCatalog do
-        if (not IsPicked(sideName, buff.id)) and (not ListContains(pendingIds, buff.id)) then
+        local prerequisiteMet = (not buff.prerequisite)
+            or IsPicked(sideName, buff.prerequisite)
+        if prerequisiteMet and (not IsPicked(sideName, buff.id))
+                and (not ListContains(pendingIds, buff.id)) then
             table.insert(available, buff)
         end
     end
@@ -165,8 +178,9 @@ local function RollRarityPattern(allowRare, allowLegendary, allowMythic)
     return pattern
 end
 
--- Remove and return a random buff of the bucket, preferring ids not in
--- avoidIds (options already used by the other side this tick).
+-- Remove and return a weighted random buff of the bucket, preferring ids not in
+-- avoidIds (options already used by the other side this tick). Tier-II catalog
+-- entries use a larger draftWeight, but rarity-slot probabilities stay unchanged.
 local function TakeRandomBuff(bucket, avoidIds)
     local count = table.getn(bucket)
     if count == 0 then
@@ -178,12 +192,28 @@ local function TakeRandomBuff(bucket, avoidIds)
             table.insert(preferred, i)
         end
     end
-    local index
-    if table.getn(preferred) > 0 then
-        index = preferred[Random(1, table.getn(preferred))]
-    else
+    local candidates = preferred
+    if table.getn(candidates) == 0 then
         -- only overlapping candidates left: identical id across sides is allowed
-        index = Random(1, count)
+        candidates = {}
+        for i = 1, count do
+            table.insert(candidates, i)
+        end
+    end
+    local totalWeight = 0
+    for _, candidateIndex in candidates do
+        local weight = math.max(1, math.floor(bucket[candidateIndex].draftWeight or 1))
+        totalWeight = totalWeight + weight
+    end
+    local roll = Random(1, totalWeight)
+    local index = candidates[table.getn(candidates)]
+    for _, candidateIndex in candidates do
+        local weight = math.max(1, math.floor(bucket[candidateIndex].draftWeight or 1))
+        roll = roll - weight
+        if roll <= 0 then
+            index = candidateIndex
+            break
+        end
     end
     return table.remove(bucket, index)
 end
@@ -191,8 +221,8 @@ end
 -- Fill the side's options following the shared pattern, downgrading slots this
 -- side cannot honor (lock/cooldown/no candidates). Picked/pending no-repeat
 -- filters are already applied by AvailableBuffs.
-local function FillSideOptions(sideName, pattern, allow, avoidIds)
-    local available = AvailableBuffs(sideName)
+local function FillSideOptions(sideName, pattern, allow, avoidIds, ignoredChoice)
+    local available = AvailableBuffs(sideName, ignoredChoice)
     local buckets = { common = {}, rare = {}, legendary = {}, mythic = {} }
     for _, buff in available do
         table.insert(buckets[BuffRarity(buff)], buff)
@@ -360,7 +390,12 @@ local function SyncPendingState(sideName, chooserArmy)
         side = sideName,
         chooserArmy = chooserArmy,
         count = table.getn(queue),
-        first = first and { tick = first.tick, options = first.options } or nil,
+        rerollAvailable = not RerollUsed[sideName],
+        first = first and {
+            tick = first.tick,
+            revision = first.revision or 0,
+            options = first.options,
+        } or nil,
     })
 end
 
@@ -447,8 +482,14 @@ local function DraftSide(tick, sideName, armies, pattern, allow, avoidIds)
     end
 
     -- human side: queue the choice, the player picks whenever they want
-    table.insert(PendingChoices[sideName],
-        { tick = tick, options = options, armies = armies, chooserArmy = chooserArmy })
+    table.insert(PendingChoices[sideName], {
+        tick = tick,
+        revision = 0,
+        options = options,
+        armies = armies,
+        chooserArmy = chooserArmy,
+        rarityAllowance = allow,
+    })
     LOG("FAF_BUFF_DRAFT: pending choice added side=" .. sideName .. " tick=" .. tick)
     LOG("FAF_BUFF_DRAFT: pending choices side=" .. sideName
         .. " count=" .. table.getn(PendingChoices[sideName]))
@@ -511,6 +552,60 @@ function ReceivePick(data)
     SyncPendingState(sideName, choice.chooserArmy)
 end
 
+--- Replaces the currently displayed choice once per side per game. The rarity
+--- pattern is copied from the existing options instead of being rolled again,
+--- so this cannot improve or reduce rare/legendary/mythic probabilities.
+function ReceiveReroll(data)
+    local sideName = data and data.side
+    local senderArmy = import('/lua/simutils.lua').GetCurrentCommandSourceArmy()
+    local queue = sideName and PendingChoices[sideName]
+    if not queue then
+        LOG("FAF_BUFF_DRAFT: reroll rejected: unknown side " .. tostring(sideName))
+        return
+    end
+    if RerollUsed[sideName] then
+        LOG("FAF_BUFF_DRAFT: reroll rejected: already used side=" .. tostring(sideName))
+        return
+    end
+
+    local choice = queue[1]
+    if (not choice) or choice.tick ~= data.tick then
+        LOG("FAF_BUFF_DRAFT: reroll rejected: choice is not first pending side="
+            .. tostring(sideName) .. " tick=" .. tostring(data and data.tick))
+        return
+    end
+    if senderArmy ~= choice.chooserArmy then
+        LOG("FAF_BUFF_DRAFT: reroll rejected: army " .. tostring(senderArmy)
+            .. " is not the chooser for " .. tostring(sideName))
+        return
+    end
+
+    local pattern = {}
+    local avoidOldIds = {}
+    for _, option in choice.options do
+        table.insert(pattern, BuffRarity(option))
+        avoidOldIds[option.id] = true
+    end
+
+    -- Ignore this choice in the pending filter so its old options remain legal
+    -- fallbacks, while avoidOldIds makes new ids win whenever alternatives exist.
+    local options = FillSideOptions(sideName, pattern,
+        choice.rarityAllowance or { rare = true, legendary = true, mythic = true },
+        avoidOldIds, choice)
+    if table.getn(options) == 0 then
+        LOG("FAF_BUFF_DRAFT: reroll rejected: no replacement options side=" .. sideName)
+        return
+    end
+
+    choice.options = options
+    choice.revision = (choice.revision or 0) + 1
+    RerollUsed[sideName] = true
+    LOG("FAF_BUFF_DRAFT: reroll used side=" .. sideName
+        .. " tick=" .. tostring(choice.tick)
+        .. " options=" .. BuffIdsToString(options))
+    SyncPendingState(sideName, choice.chooserArmy)
+end
+
 -- Side->armies mapping cached for the admin panel; set from the simInit hook at
 -- BeginSession and refreshed on every draft tick.
 local KnownSides = nil
@@ -531,8 +626,8 @@ local function SideArmies(sideName)
     return nil
 end
 
--- Admin access: DebugAdmin flag + (when configured) the sender's brain Nickname
--- must match AdminOwnerNickname. The nickname lives on the army brain
+-- Admin access: DebugAdmin flag + the sender's brain Nickname must match one of
+-- AdminOwnerNicknames. The nickname lives on the army brain
 -- (brain.Nickname, set in OnCreateArmyBrain), so the sim validates it without
 -- trusting anything the UI sent.
 local function AdminAccessAllowed(senderArmy)
@@ -541,17 +636,15 @@ local function AdminAccessAllowed(senderArmy)
         LOG("FAF_BUFF_DRAFT_ADMIN: access denied DebugAdmin disabled in config")
         return false
     end
-    local owner = config.AdminOwnerNickname
-    if owner and owner ~= "" then
-        local brain = ArmyBrains[senderArmy]
-        local nickname = brain and brain.Nickname
-        if nickname ~= owner then
-            LOG("FAF_BUFF_DRAFT_ADMIN: access denied " .. tostring(nickname)
-                .. " (army " .. tostring(senderArmy) .. " is not " .. owner .. ")")
-            return false
-        end
-        LOG("FAF_BUFF_DRAFT_ADMIN: access allowed " .. owner)
+    local brain = ArmyBrains[senderArmy]
+    local nickname = brain and brain.Nickname
+    if not AdminAccess.IsNicknameAllowed(nickname) then
+        LOG("FAF_BUFF_DRAFT_ADMIN: access denied " .. tostring(nickname)
+            .. " (army " .. tostring(senderArmy) .. "; owners: "
+            .. AdminAccess.ConfiguredOwnersText() .. ")")
+        return false
     end
+    LOG("FAF_BUFF_DRAFT_ADMIN: access allowed " .. tostring(nickname))
     return true
 end
 
@@ -568,15 +661,20 @@ function AdminGrantBuff(data, senderArmy)
         LOG("FAF_BUFF_DRAFT_ADMIN: grant rejected: unknown side " .. tostring(sideName))
         return
     end
-    local known = false
+    local knownBuff = nil
     for _, buff in BuffCatalog do
         if buff.id == buffId then
-            known = true
+            knownBuff = buff
             break
         end
     end
-    if not known then
+    if not knownBuff then
         LOG("FAF_BUFF_DRAFT_ADMIN: grant rejected: unknown buff " .. tostring(buffId))
+        return
+    end
+    if knownBuff.prerequisite and not IsPicked(sideName, knownBuff.prerequisite) then
+        LOG("FAF_BUFF_DRAFT_ADMIN: grant rejected: " .. tostring(buffId)
+            .. " requires " .. tostring(knownBuff.prerequisite) .. " for " .. sideName)
         return
     end
     if IsPicked(sideName, buffId) then
@@ -619,6 +717,20 @@ function AdminRemoveBuff(data, senderArmy)
         LOG("FAF_BUFF_DRAFT_ADMIN: remove rejected: " .. tostring(buffId)
             .. " is not picked by " .. sideName)
         return
+    end
+    local pendingIds = PendingBuffIds(sideName)
+    for _, buff in BuffCatalog do
+        if buff.prerequisite == buffId then
+            if IsPicked(sideName, buff.id) then
+                LOG("FAF_BUFF_DRAFT_ADMIN: remove rejected: " .. tostring(buffId)
+                    .. " is required by picked buff " .. tostring(buff.id))
+                return
+            elseif ListContains(pendingIds, buff.id) then
+                LOG("FAF_BUFF_DRAFT_ADMIN: remove rejected: " .. tostring(buffId)
+                    .. " is required by pending option " .. tostring(buff.id))
+                return
+            end
+        end
     end
     local armies = SideArmies(sideName)
     if not armies then
